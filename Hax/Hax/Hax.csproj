@@ -39,9 +39,11 @@
     <Compile Include="Game1.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Goal.cs" />
+    <Compile Include="InputWindow.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Movable.cs" />
     <Compile Include="MovingPlatform.cs" />
+    <Compile Include="Obstacle.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
