@@ -20,6 +20,8 @@ namespace Hax {
         Map map; //map contains a grid of game objects read from a file
         Player player; //THE player object
 
+        KeyboardState previous; //previous state of keyboard
+
         public Game1()
             : base() {
             graphics = new GraphicsDeviceManager(this);
@@ -34,6 +36,8 @@ namespace Hax {
         /// </summary>
         protected override void Initialize() {
             // TODO: Add your initialization logic here
+            player = new Player();
+            player.Location = new Rectangle(50, 50, 100, 100);
 
             base.Initialize();
         }
@@ -47,6 +51,7 @@ namespace Hax {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            GameObject.defaultImage=Content.Load<Texture2D>("enemy");
         }
 
         /// <summary>
@@ -68,6 +73,28 @@ namespace Hax {
 
             // TODO: Add your update logic here
 
+            //get current state of keyboard
+            KeyboardState current = Keyboard.GetState();
+
+            //check if a key is currently pressed, but wasn't before, call appropriate method on player
+            if (current.IsKeyDown(Keys.Left)){// && !previous.IsKeyDown(Keys.Left)) {
+                player.LeftKey();
+            }
+            if (current.IsKeyDown(Keys.Right)) {// && !previous.IsKeyDown(Keys.Right)) {
+                player.RightKey();
+            }
+            if (current.IsKeyDown(Keys.Up)) {// && !previous.IsKeyDown(Keys.Up)) {
+                player.UpKey();
+            }
+            if (current.IsKeyDown(Keys.Down)) {// && !previous.IsKeyDown(Keys.Down)) {
+                player.DownKey();
+            }
+
+            //store previous state of keyboard
+            previous = current;
+
+            player.Update();
+
             base.Update(gameTime);
         }
 
@@ -79,6 +106,10 @@ namespace Hax {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+           
+            spriteBatch.Begin();
+            player.Draw(spriteBatch);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

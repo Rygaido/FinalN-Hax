@@ -16,16 +16,18 @@ namespace Hax {
         private Boolean active; //whether or not object is in use
         //if not active do not draw or check collisions
 
-        private int speed; //speed object is moving (pixels)
-        private int direction; // direction object is moving (degrees)
-
         //IDEA: using a speed and direction is very accurate, but is very math-heavy
-        //if necessary, just replace with xSpeed and ySpeed ints,
-        //private int xSpeed;
-        //private int ySpeed;
+        //private int speed; //speed object is moving (pixels)
+        //private int direction; // direction object is moving (degrees)
 
+        //alternatively, just replace with xSpeed and ySpeed ints,
+        protected int xSpeed;
+        protected int ySpeed;
 
-        public const int gravity= 5; //player and enemies accelerate downward by pixels per frame
+        //is object facing left? should image be mirrored
+        protected bool faceLeft;
+
+        public const int gravity= 1; //player and enemies accelerate downward by pixels per frame per frame
 
         //overload update to call move method, then call base update method
         public override void Update() {
@@ -36,6 +38,13 @@ namespace Hax {
         //change location based on speed and direction
         public virtual void Move() {
             //method stub
+
+            //find the new x and y coordinates by check former coordinates and adding x and y speeds
+            int x = Location.X + xSpeed;
+            int y = Location.Y + ySpeed;
+
+            //create new rectangle at proper location
+            Location = new Rectangle(x,y,Location.Width,Location.Height);
         }
     }
 }

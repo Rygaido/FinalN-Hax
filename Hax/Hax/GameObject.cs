@@ -14,18 +14,33 @@ using Microsoft.Xna.Framework.GamerServices;
 namespace Hax {
     class GameObject {
 
+        public static Texture2D defaultImage;
+
         private Rectangle location; //represent space occupied by object, should have X&Y coordinates and a length&width
         private Texture2D image; //the image drawn over object's rectangle
         private Vector2 offset; //a modifier for location based on the scrolling grid
 
-        //accessor for rectangle which accounts for offset
+        //property for rectangle location, used in move method
         public Rectangle Location {
+            get { return location; }
+            set { location = value; }
+        }
+        //alternate accessor for rectangle which accounts for offset //used in draw method
+        public Rectangle RealLocation {
             get { return new Rectangle((int)(location.X+offset.X), (int)(location.Y+offset.Y), location.Width, location.Height); }
+        }
+
+        public GameObject() { //default constructor
+            
         }
         
         //draw image on location
-        public virtual void Draw() {
+        public void Draw(SpriteBatch sb) {
             //method stub
+            image = defaultImage;
+           // if (image != null) {
+                sb.Draw(image, RealLocation, Color.White);
+           // }
         }
 
         //
