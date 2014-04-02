@@ -7,5 +7,9 @@ using System.Text;
 namespace Hax {
     class MovingPlatform:Movable,Platform {
         Boolean collidingPlayer = false;
+
+        public void checkObject(Movable mov) {
+            throw new NotImplementedException();
+        }
     }
 }

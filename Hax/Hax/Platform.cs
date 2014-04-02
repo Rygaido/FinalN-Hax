@@ -11,5 +11,8 @@ using System.Text;
 namespace Hax {
     interface Platform {
         //interface stub... not sure if anything needs to be in here
+
+        //methodstub //platform checks movable-gameobject's location and yspeed to see if it needs to catch object and do what platforms do
+        void checkObject(Movable mov);
     }
 }

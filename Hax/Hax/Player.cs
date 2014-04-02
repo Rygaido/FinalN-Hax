@@ -13,13 +13,18 @@ namespace Hax {
 
         private Playerstate state;
 
-        private int jumpSpeed = 5; //vertical speed at instant of jump
+        private int jumpSpeed = 15; //vertical speed at instant of jump
         private int runSpeed = 5; //max running speed
+        private int acceleration = 1;
 
         //boolean variables for whether certain skills are usable at the time
         private Boolean canAttack;
         private Boolean canDefend;
         private Boolean canJump=true;//set to true by default for now
+
+        public Player() { //default constructor
+            Image = ImageBank.defaultImage;
+        }
 
         //Method stubs for things player can do
         //these methods are marked private, public methods below should be called from game
@@ -39,8 +44,7 @@ namespace Hax {
             if (canJump) {
                 state = Playerstate.jumping;
 
-                ySpeed -= jumpSpeed;
-                //method stub
+                ySpeed = -jumpSpeed;
             }
         }
         //method controls walking, does not have a bool value as I assume it can't be disabled
@@ -58,7 +62,7 @@ namespace Hax {
         }
 
         //public methods corressponding to button presses
-        public void LeftKey() {
+        public void LeftKey() { //left and right keys are intended to be held
             Walk(true);
         }
         public void RightKey() {
@@ -76,15 +80,38 @@ namespace Hax {
 
         //overload of update method
         public override void Update() {
-            if (state != Playerstate.walking) {
-                if (xSpeed > 0) xSpeed--;
-                if (xSpeed < 0) xSpeed++;
+            if (state == Playerstate.standing) { //if player is standing still, deccelarate
+                if (xSpeed > 0) { xSpeed-=acceleration; }
+                else if (xSpeed < 0) { xSpeed += acceleration; } 
+                else { xSpeed = 0; } //Bugfix: if caught in small space between acc and -acc, set speed to 0 to avoid sliding
             }
-            //apply gravity
-            //ySpeed += Movable.gravity;
 
-            state = Playerstate.standing;
+            //update player's image based on current state
+            if (state == Playerstate.jumping) {
+                Image = ImageBank.playerJump;
+            } else if (state == Playerstate.walking) {
+                Image = ImageBank.playerWalk;
+            } else if (state == Playerstate.standing) {
+                Image = ImageBank.playerStand;
+            }
+
+            //after updating image, reset state (unless it's jumping state, which must be changed externally)
+            if (state != Playerstate.jumping) { 
+                state = Playerstate.standing;
+            }
+
             base.Update();
+
+            //apply gravity
+            ySpeed += Movable.gravity;
+            //ySpeed = 1;
+        }
+
+        public override void Landing() {
+            base.Landing();
+            if (state == Playerstate.jumping) {
+                state = Playerstate.standing;
+            }
         }
     }
 }

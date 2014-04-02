@@ -14,11 +14,12 @@ using Microsoft.Xna.Framework.GamerServices;
 namespace Hax {
     class GameObject {
 
-        public static Texture2D defaultImage;
-
         private Rectangle location; //represent space occupied by object, should have X&Y coordinates and a length&width
         private Texture2D image; //the image drawn over object's rectangle
         private Vector2 offset; //a modifier for location based on the scrolling grid
+
+        //is object facing left? should image be mirrored
+        protected bool faceLeft;
 
         //property for rectangle location, used in move method
         public Rectangle Location {
@@ -30,17 +31,24 @@ namespace Hax {
             get { return new Rectangle((int)(location.X+offset.X), (int)(location.Y+offset.Y), location.Width, location.Height); }
         }
 
+        //get and set property fo image
+        public Texture2D Image {
+            get { return image; }
+            set { image = value; }
+        }
+
         public GameObject() { //default constructor
-            
+            Image = ImageBank.defaultImage;
         }
         
         //draw image on location
         public void Draw(SpriteBatch sb) {
-            //method stub
-            image = defaultImage;
-           // if (image != null) {
-                sb.Draw(image, RealLocation, Color.White);
-           // }
+            if (Image != null) {
+                SpriteEffects se = SpriteEffects.None; //apply effect to flip image if faceLeft is true
+                if (faceLeft) { se = SpriteEffects.FlipHorizontally; }
+
+                sb.Draw(Image, RealLocation, null, Color.White, 0.0f, new Vector2(0, 0), se, 0.0f);
+            }
         }
 
         //

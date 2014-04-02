@@ -19,6 +19,8 @@ namespace Hax {
 
         Map map; //map contains a grid of game objects read from a file
         Player player; //THE player object
+        Wall wally; //a lone wall used for testing
+        Wall wally2; //another lone wall used for testing
 
         KeyboardState previous; //previous state of keyboard
 
@@ -35,11 +37,16 @@ namespace Hax {
         /// and initialize them as well.
         /// </summary>
         protected override void Initialize() {
-            // TODO: Add your initialization logic here
-            player = new Player();
-            player.Location = new Rectangle(50, 50, 100, 100);
-
             base.Initialize();
+
+            map = new Map();
+            //spawn a player and a wall here for testing purposes
+            player = new Player();
+            player.Location = new Rectangle(50, 250, 100, 100);
+            wally = new Wall();
+            wally.Location = new Rectangle(50, 400, 100, 100);
+            wally2 = new Wall();
+            wally2.Location = new Rectangle(300, 400, 100, 100);
         }
 
         /// <summary>
@@ -51,7 +58,13 @@ namespace Hax {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            GameObject.defaultImage=Content.Load<Texture2D>("enemy");
+            ImageBank.defaultImage=Content.Load<Texture2D>("enemy");
+            ImageBank.wallImage  = Content.Load<Texture2D>("platform");
+
+            //mario sprites are just placeholders //remember to replace them before releasing game
+            ImageBank.playerStand = Content.Load<Texture2D>("mario_stand");
+            ImageBank.playerWalk = Content.Load<Texture2D>("mario_walk");
+            ImageBank.playerJump = Content.Load<Texture2D>("mario_jump");
         }
 
         /// <summary>
@@ -78,12 +91,12 @@ namespace Hax {
 
             //check if a key is currently pressed, but wasn't before, call appropriate method on player
             if (current.IsKeyDown(Keys.Left)){// && !previous.IsKeyDown(Keys.Left)) {
-                player.LeftKey();
+                player.LeftKey(); //left key can be held
             }
             if (current.IsKeyDown(Keys.Right)) {// && !previous.IsKeyDown(Keys.Right)) {
-                player.RightKey();
+                player.RightKey(); //right key can be held
             }
-            if (current.IsKeyDown(Keys.Up)) {// && !previous.IsKeyDown(Keys.Up)) {
+            if (current.IsKeyDown(Keys.Up) && !previous.IsKeyDown(Keys.Up)) {
                 player.UpKey();
             }
             if (current.IsKeyDown(Keys.Down)) {// && !previous.IsKeyDown(Keys.Down)) {
@@ -94,6 +107,9 @@ namespace Hax {
             previous = current;
 
             player.Update();
+            map.Update();
+            wally.checkObject(player);
+            wally2.checkObject(player);
 
             base.Update(gameTime);
         }
@@ -108,7 +124,10 @@ namespace Hax {
             // TODO: Add your drawing code here
            
             spriteBatch.Begin();
+            map.Draw(spriteBatch);
             player.Draw(spriteBatch);
+            wally.Draw(spriteBatch);
+            wally2.Draw(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);

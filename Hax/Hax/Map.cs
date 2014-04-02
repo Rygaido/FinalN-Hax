@@ -34,7 +34,7 @@ namespace Hax {
             //use the overload of update: Update(scroll);
             //that way all objects will move with grid instead of screen
         }
-        public void Draw() {
+        public void Draw(SpriteBatch sb) {
             //method stub
         }
 

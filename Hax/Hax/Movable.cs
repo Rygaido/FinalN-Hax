@@ -22,12 +22,11 @@ namespace Hax {
 
         //alternatively, just replace with xSpeed and ySpeed ints,
         protected int xSpeed;
-        protected int ySpeed;
+        public int ySpeed;
 
-        //is object facing left? should image be mirrored
-        protected bool faceLeft;
 
         public const int gravity= 1; //player and enemies accelerate downward by pixels per frame per frame
+        //GRAVITY PULLS IN THE POSITIVE Y DIRECTION!!! //lower on screen == higher Y //don't confuse that
 
         //overload update to call move method, then call base update method
         public override void Update() {
@@ -45,6 +44,11 @@ namespace Hax {
 
             //create new rectangle at proper location
             Location = new Rectangle(x,y,Location.Width,Location.Height);
+        }
+
+        //call this method on an object that has landed on a platform
+        public virtual void Landing() {
+
         }
     }
 }
