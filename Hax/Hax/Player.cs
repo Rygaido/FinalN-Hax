@@ -13,7 +13,7 @@ namespace Hax {
 
         private Playerstate state;
 
-        private int jumpSpeed = 15; //vertical speed at instant of jump
+        private int jumpSpeed = 50; //vertical speed at instant of jump
         private int runSpeed = 5; //max running speed
         private int acceleration = 1;
 
