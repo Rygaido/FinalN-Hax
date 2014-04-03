@@ -18,6 +18,7 @@ namespace Hax {
         enum Playerstate { standing, walking, jumping, attacking, defending };
 
         private Playerstate state;
+        private Playerstate previous;
 
         private int jumpSpeed = 20; //vertical speed at instant of jump
         private int runSpeed = 5; //max running speed
@@ -35,6 +36,9 @@ namespace Hax {
             Location = new Rectangle(50, 250, 57, 87);
             //Location.Width = Image.Width;
             //Location.Height = Image.Height;
+
+            state = Playerstate.standing;
+            previous = state;
         }
 
         //Method stubs for things player can do
@@ -112,17 +116,25 @@ namespace Hax {
 
             //update player's image based on current state
             if (state == Playerstate.jumping) {
-                Image = ImageBank.playerJump;
+                Animate(ImageBank.playerJump);
             } else if (state == Playerstate.walking) {
-                Image = ImageBank.playerWalk;
+                animationSpeed = 12;
+                Animate(ImageBank.playerWalk);
             } else if (state == Playerstate.standing) {
-                Image = ImageBank.playerStand;
+                animationSpeed = 25;
+                Animate(ImageBank.playerStand);
             }
 
             //after updating image, reset state (unless it's jumping state, which must be changed externally)
             if (state != Playerstate.jumping) { 
                 state = Playerstate.standing;
             }
+
+            if (state != previous)
+            {
+                animationTimer = 25;
+            }
+            previous = state;
 
             base.Update();
 

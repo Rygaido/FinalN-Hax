@@ -18,6 +18,9 @@ namespace Hax {
         private Texture2D image; //the image drawn over object's rectangle
         private Vector2 offset; //a modifier for location based on the scrolling grid
 
+        protected int animationTimer = 0;
+        protected int animationSpeed = 25;
+
         //is object facing left? should image be mirrored
         protected bool faceLeft;
 
@@ -45,10 +48,8 @@ namespace Hax {
         }
         
         //draw image on location
-        public void Draw(SpriteBatch sb) {
+        public virtual void Draw(SpriteBatch sb) {
             if (Image != null) {
-                
-
                 SpriteEffects se = SpriteEffects.None; //apply effect to flip image if faceLeft is true
                 if (faceLeft) { se = SpriteEffects.FlipHorizontally; }
 
@@ -58,6 +59,7 @@ namespace Hax {
 
         //
         public virtual void Update() {
+            
             //method stub
         }
 
@@ -67,6 +69,18 @@ namespace Hax {
             Update();
 
             //new Rectangle(new Vector2());
+        }
+
+        protected void Animate(Queue<Texture2D> sprites)
+        {
+            if (animationTimer > animationSpeed)
+            {
+                Image = sprites.Dequeue();
+                sprites.Enqueue(Image);
+                animationTimer = 0;
+            }
+
+            animationTimer++;
         }
     }
 }

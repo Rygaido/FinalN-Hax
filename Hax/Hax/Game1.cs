@@ -21,9 +21,14 @@ namespace Hax {
         Player player; //THE player object
         Wall wally; //a lone wall used for testing
         Wall wally2; //another lone wall used for testing
-        
+
+        Wall wally3;
+        Wall wally4;
+
         WalkingMinion enemy;
         Goal goal;
+
+        int animationTimer = 0;
 
         KeyboardState previous; //previous state of keyboard
 
@@ -51,10 +56,14 @@ namespace Hax {
             wally.Location = new Rectangle(50, 400, 100, 100);
             wally2 = new Wall();
             wally2.Location = new Rectangle(300, 400, 500, 100);
-            //wally2.Location = new Rectangle(125, 300, 900, 200);
+           // wally2.Location = new Rectangle(125, 300, 900, 200);
+            wally3 = new Wall();
+            //wally3.Location = new Rectangle(300, 300, 100, 100);
+            wally4 = new Wall();
+            wally4.Location = new Rectangle(550, 300, 100, 100);
             goal = new Goal();
 
-            enemy = new WalkingMinion();
+            enemy = new WalkingMinion(player);
         }
 
         /// <summary>
@@ -70,9 +79,11 @@ namespace Hax {
             ImageBank.wallImage  = Content.Load<Texture2D>("platform");
 
             //mario sprites are just placeholders //remember to replace them before releasing game
-            ImageBank.playerStand = Content.Load<Texture2D>("minion");
-            ImageBank.playerWalk = Content.Load<Texture2D>("mario_walk");
-            ImageBank.playerJump = Content.Load<Texture2D>("mario_jump");
+            ImageBank.playerStand.Enqueue(Content.Load<Texture2D>("idle1"));
+            ImageBank.playerStand.Enqueue(Content.Load<Texture2D>("idle2"));
+            ImageBank.playerWalk.Enqueue(Content.Load<Texture2D>("run1"));
+            ImageBank.playerWalk.Enqueue(Content.Load<Texture2D>("run2"));
+            ImageBank.playerJump.Enqueue(Content.Load<Texture2D>("mario_jump"));
 
             ImageBank.walkingMinion = Content.Load<Texture2D>("walkingMinion");
             ImageBank.goal = Content.Load<Texture2D>("goal");
@@ -117,14 +128,23 @@ namespace Hax {
             if (current.IsKeyDown(Keys.Down)) {// && !previous.IsKeyDown(Keys.Down)) {
                 player.DownKey();
             }
-            wally.checkObject(player);
-            wally2.checkObject(player);
+
             //store previous state of keyboard
             previous = current;
 
+            wally.checkObject(player);
+            wally2.checkObject(player);
+            wally3.checkObject(player);
+            wally4.checkObject(player);
+
+            wally.checkObject(enemy);
+            wally2.checkObject(enemy);
+            wally3.checkObject(enemy);
+            wally4.checkObject(enemy);
+
             player.Update();
             map.Update();
-            enemy.CheckInRange(player);
+            //enemy.CheckInRange(player);
             enemy.Update();
             goal.Update();
             if (player.Location.Y > 600) 
@@ -132,20 +152,19 @@ namespace Hax {
                 player.Reset();
                 enemy.Reset();
             }
-            if (enemy.Location.Y > 600)
+           /* if (enemy.Location.Y > 600)
             {
                 enemy.Reset();
-            }
-            enemy.CollideWithPlayer(player);
+            }*/
             
-
-            wally2.checkObject(enemy);
 
             if (player.Location.Intersects(goal.Location) && current.IsKeyDown(Keys.Down))
             {
                 player.Reset();
                 enemy.Reset();
             }
+
+            animationTimer++;
 
             base.Update(gameTime);
         }
@@ -165,6 +184,8 @@ namespace Hax {
             enemy.Draw(spriteBatch);
             wally.Draw(spriteBatch);
             wally2.Draw(spriteBatch);
+            wally3.Draw(spriteBatch);
+            wally4.Draw(spriteBatch);
             goal.Draw(spriteBatch);
             player.Draw(spriteBatch);
 

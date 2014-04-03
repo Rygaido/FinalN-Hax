@@ -13,8 +13,18 @@ using Microsoft.Xna.Framework.GamerServices;
 namespace Hax {
     class Movable : GameObject{
 
-        private Boolean active; //whether or not object is in use
+        protected Boolean active=true; //whether or not object is in use
         //if not active do not draw or check collisions
+
+        public Boolean Active { get { return active; } set { active = value; } }
+
+        private Rectangle previous;
+
+        public Rectangle Previous
+        {
+            get { return previous; }
+            set { previous = value; }
+        }
 
         //IDEA: using a speed and direction is very accurate, but is very math-heavy
         //private int speed; //speed object is moving (pixels)
@@ -31,6 +41,7 @@ namespace Hax {
 
         //overload update to call move method, then call base update method
         public override void Update() {
+            Previous = Location;
             Move();
             base.Update();
         }

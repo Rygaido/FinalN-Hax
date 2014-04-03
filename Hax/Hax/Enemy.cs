@@ -18,12 +18,13 @@ namespace Hax {
         enum Enemystate { standing, walking, chasing};
 
         Projectile bullet; //the bullet the enemy shoots, set to null for a non-shooting enemy
+        protected Player player;
 
-        public Enemy()
+        public Enemy(Player p)
         {
             faceLeft = true;
             Location = new Rectangle(500, 300, 50, 55);
-            
+            player = p;
         }
 
         //spawn a bullet
@@ -40,13 +41,14 @@ namespace Hax {
         public virtual void Reset()
         {
             Location = new Rectangle(500, 300, 50, 55);
+            active = true;
         }
 
-        public void CollideWithPlayer(Player p)
+        public virtual void CollideWithPlayer()
         {
-            if (p.Location.Intersects(Location))
+            if (player.Location.Intersects(Location))
             {
-                p.TakeHit();
+                player.TakeHit();
             }
         }
     }
