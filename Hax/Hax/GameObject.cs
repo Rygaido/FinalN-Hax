@@ -39,11 +39,16 @@ namespace Hax {
 
         public GameObject() { //default constructor
             Image = ImageBank.defaultImage;
+
+            location.Width = Image.Width;
+            location.Height = Image.Height;
         }
         
         //draw image on location
         public void Draw(SpriteBatch sb) {
             if (Image != null) {
+                
+
                 SpriteEffects se = SpriteEffects.None; //apply effect to flip image if faceLeft is true
                 if (faceLeft) { se = SpriteEffects.FlipHorizontally; }
 

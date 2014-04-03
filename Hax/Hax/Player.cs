@@ -1,7 +1,13 @@
-﻿using System;
+﻿#region Using Statements
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Storage;
+using Microsoft.Xna.Framework.GamerServices;
+#endregion
 
 //The player's object, subclass of movable and GameObject
 namespace Hax {
@@ -13,7 +19,7 @@ namespace Hax {
 
         private Playerstate state;
 
-        private int jumpSpeed = 50; //vertical speed at instant of jump
+        private int jumpSpeed = 20; //vertical speed at instant of jump
         private int runSpeed = 5; //max running speed
         private int acceleration = 1;
 
@@ -24,6 +30,10 @@ namespace Hax {
 
         public Player() { //default constructor
             Image = ImageBank.defaultImage;
+
+            Location = new Rectangle(50, 250, 57, 87);
+            //Location.Width = Image.Width;
+            //Location.Height = Image.Height;
         }
 
         //Method stubs for things player can do
@@ -41,7 +51,7 @@ namespace Hax {
             }
         }
         private void Jump() {
-            if (canJump) {
+            if (canJump && state != Playerstate.jumping) {
                 state = Playerstate.jumping;
 
                 ySpeed = -jumpSpeed;
@@ -70,6 +80,13 @@ namespace Hax {
         }
         public void UpKey() {
             Jump();
+        }
+        public void ReleaseUpKey()
+        {
+            if (!(ySpeed > 0))
+            {
+                ySpeed = 0;
+            }
         }
         public void DownKey() {
 
@@ -112,6 +129,16 @@ namespace Hax {
             if (state == Playerstate.jumping) {
                 state = Playerstate.standing;
             }
+        }
+
+        public void Reset()
+        {
+            Location = new Rectangle(50, 250, Location.Width, Location.Height);
+        }
+
+        public void TakeHit()
+        {
+            Reset();
         }
     }
 }

@@ -21,12 +21,15 @@ namespace Hax {
         Player player; //THE player object
         Wall wally; //a lone wall used for testing
         Wall wally2; //another lone wall used for testing
+        WalkingMinion enemy;
 
         KeyboardState previous; //previous state of keyboard
 
         public Game1()
             : base() {
             graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 600;
             Content.RootDirectory = "Content";
         }
 
@@ -42,11 +45,12 @@ namespace Hax {
             map = new Map();
             //spawn a player and a wall here for testing purposes
             player = new Player();
-            player.Location = new Rectangle(50, 250, 100, 100);
             wally = new Wall();
             wally.Location = new Rectangle(50, 400, 100, 100);
             wally2 = new Wall();
-            wally2.Location = new Rectangle(300, 400, 100, 100);
+            wally2.Location = new Rectangle(300, 400, 500, 100);
+
+            enemy = new WalkingMinion();
         }
 
         /// <summary>
@@ -62,9 +66,12 @@ namespace Hax {
             ImageBank.wallImage  = Content.Load<Texture2D>("platform");
 
             //mario sprites are just placeholders //remember to replace them before releasing game
-            ImageBank.playerStand = Content.Load<Texture2D>("mario_stand");
+            ImageBank.playerStand = Content.Load<Texture2D>("minion");
             ImageBank.playerWalk = Content.Load<Texture2D>("mario_walk");
             ImageBank.playerJump = Content.Load<Texture2D>("mario_jump");
+
+            ImageBank.walkingMinion = Content.Load<Texture2D>("walkingMinion");
+            ImageBank.goal = Content.Load<Texture2D>("goal");
         }
 
         /// <summary>
@@ -99,6 +106,10 @@ namespace Hax {
             if (current.IsKeyDown(Keys.Up) && !previous.IsKeyDown(Keys.Up)) {
                 player.UpKey();
             }
+            if (!current.IsKeyDown(Keys.Up) && previous.IsKeyDown(Keys.Up))
+            {
+                player.ReleaseUpKey();
+            }
             if (current.IsKeyDown(Keys.Down)) {// && !previous.IsKeyDown(Keys.Down)) {
                 player.DownKey();
             }
@@ -108,8 +119,22 @@ namespace Hax {
 
             player.Update();
             map.Update();
+            enemy.CheckInRange(player);
+            enemy.Update();
+            if (player.Location.Y > 450) 
+            {
+                player.Reset();
+                enemy.Reset();
+            }
+            if (enemy.Location.Y > 450)
+            {
+                enemy.Reset();
+            }
+            enemy.CollideWithPlayer(player);
             wally.checkObject(player);
             wally2.checkObject(player);
+
+            wally2.checkObject(enemy);
 
             base.Update(gameTime);
         }
@@ -126,6 +151,7 @@ namespace Hax {
             spriteBatch.Begin();
             map.Draw(spriteBatch);
             player.Draw(spriteBatch);
+            enemy.Draw(spriteBatch);
             wally.Draw(spriteBatch);
             wally2.Draw(spriteBatch);
             spriteBatch.End();

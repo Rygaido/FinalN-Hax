@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.GamerServices;
 #endregion
 
 namespace Hax {
-    abstract class ImageBank {
+    static class ImageBank {
 
         public static Texture2D defaultImage; //default image assigned to objects, used for testing
         public static Texture2D wallImage;
@@ -18,5 +18,8 @@ namespace Hax {
         public static Texture2D playerStand;
         public static Texture2D playerWalk;
         public static Texture2D playerJump;
+
+        public static Texture2D walkingMinion;
+        public static Texture2D goal;
     }
 }
