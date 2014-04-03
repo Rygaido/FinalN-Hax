@@ -28,6 +28,7 @@ namespace Hax {
         private Boolean canDefend;
         private Boolean canJump=true;//set to true by default for now
 
+
         public Player() { //default constructor
             Image = ImageBank.defaultImage;
 
@@ -59,15 +60,21 @@ namespace Hax {
         }
         //method controls walking, does not have a bool value as I assume it can't be disabled
         private void Walk(bool facingLeft){
-            if (state != Playerstate.jumping) { //unless player is airborn, set state to walking
-                state = Playerstate.walking;
-            }
-            faceLeft = facingLeft;
-            if (xSpeed < runSpeed && !faceLeft) { //increase horizantal speed until runspeed is reached
-                xSpeed++;
-            }
-            if (xSpeed > -runSpeed && faceLeft) { //if facing left, must actually decrease speed to negative limit
-                xSpeed--;
+            if (!collidingWithWall)
+            {
+                if (state != Playerstate.jumping)
+                { //unless player is airborn, set state to walking
+                    state = Playerstate.walking;
+                }
+                faceLeft = facingLeft;
+                if (xSpeed < runSpeed && !faceLeft)
+                { //increase horizantal speed until runspeed is reached
+                    xSpeed++;
+                }
+                if (xSpeed > -runSpeed && faceLeft)
+                { //if facing left, must actually decrease speed to negative limit
+                    xSpeed--;
+                }
             }
         }
 

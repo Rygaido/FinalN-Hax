@@ -26,7 +26,7 @@ namespace Hax
 
             if (isInRange == true)
             {
-                xSpeed = -5;
+                xSpeed = -15;
             }
             else
             {

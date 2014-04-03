@@ -21,9 +21,10 @@ namespace Hax {
         //private int direction; // direction object is moving (degrees)
 
         //alternatively, just replace with xSpeed and ySpeed ints,
-        protected int xSpeed;
+        public int xSpeed;
         public int ySpeed;
 
+        public bool collidingWithWall = false;
 
         public const int gravity= 1; //player and enemies accelerate downward by pixels per frame per frame
         //GRAVITY PULLS IN THE POSITIVE Y DIRECTION!!! //lower on screen == higher Y //don't confuse that

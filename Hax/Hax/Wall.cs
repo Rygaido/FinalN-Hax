@@ -1,7 +1,13 @@
-﻿using System;
+﻿#region Using Statements
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Storage;
+using Microsoft.Xna.Framework.GamerServices;
+#endregion
 
 //wall stops other objects from moving though it. de-activates projectiles
 //also usable as a floor
@@ -31,6 +37,25 @@ namespace Hax {
                             mov.Landing();
                         }
                     }
+                }
+            }
+
+            if (mov.Location.Top > Location.Bottom+1){ //check object is within reach on bottomside
+                if (mov.Location.Top < Location.Top-1){ //check object is within reach on topside
+                    if (mov.Location.Right <= Location.Left)
+                    { //check object is to the left of wall's leftmost edge
+
+                        //all 3 requirements met, restrict object's xspeed so that it can't pass through object
+                        if (mov.xSpeed >= Location.Left - mov.Location.Right)
+                        //if(mov.Location.X  >= Location.X+Location.Width)
+                        {
+                            //mov.ySpeed = 0;
+                            mov.xSpeed = 0;
+                            mov.collidingWithWall = true;
+                        }
+                    }
+
+                    //Location.
                 }
             }
         }

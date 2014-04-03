@@ -15,7 +15,7 @@ namespace Hax {
     class Unit:Movable {
         int health;
 
-        private Boolean faceLeft = true; //wether the unit is facing left
+        
         //set to false to face right
         //since mirroring the sprite is a simple transformation, I figured it was better to
         //track the facing Direction seperate from the state machine, otherwise we'd need twice as many states 

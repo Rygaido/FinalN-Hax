@@ -21,7 +21,9 @@ namespace Hax {
         Player player; //THE player object
         Wall wally; //a lone wall used for testing
         Wall wally2; //another lone wall used for testing
+        
         WalkingMinion enemy;
+        Goal goal;
 
         KeyboardState previous; //previous state of keyboard
 
@@ -49,6 +51,8 @@ namespace Hax {
             wally.Location = new Rectangle(50, 400, 100, 100);
             wally2 = new Wall();
             wally2.Location = new Rectangle(300, 400, 500, 100);
+            //wally2.Location = new Rectangle(125, 300, 900, 200);
+            goal = new Goal();
 
             enemy = new WalkingMinion();
         }
@@ -113,7 +117,8 @@ namespace Hax {
             if (current.IsKeyDown(Keys.Down)) {// && !previous.IsKeyDown(Keys.Down)) {
                 player.DownKey();
             }
-
+            wally.checkObject(player);
+            wally2.checkObject(player);
             //store previous state of keyboard
             previous = current;
 
@@ -121,20 +126,26 @@ namespace Hax {
             map.Update();
             enemy.CheckInRange(player);
             enemy.Update();
-            if (player.Location.Y > 450) 
+            goal.Update();
+            if (player.Location.Y > 600) 
             {
                 player.Reset();
                 enemy.Reset();
             }
-            if (enemy.Location.Y > 450)
+            if (enemy.Location.Y > 600)
             {
                 enemy.Reset();
             }
             enemy.CollideWithPlayer(player);
-            wally.checkObject(player);
-            wally2.checkObject(player);
+            
 
             wally2.checkObject(enemy);
+
+            if (player.Location.Intersects(goal.Location) && current.IsKeyDown(Keys.Down))
+            {
+                player.Reset();
+                enemy.Reset();
+            }
 
             base.Update(gameTime);
         }
@@ -149,11 +160,14 @@ namespace Hax {
             // TODO: Add your drawing code here
            
             spriteBatch.Begin();
+
             map.Draw(spriteBatch);
-            player.Draw(spriteBatch);
             enemy.Draw(spriteBatch);
             wally.Draw(spriteBatch);
             wally2.Draw(spriteBatch);
+            goal.Draw(spriteBatch);
+            player.Draw(spriteBatch);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
