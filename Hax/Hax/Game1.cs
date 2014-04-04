@@ -27,6 +27,9 @@ namespace Hax {
         GameObject pausemessagething;
         GameObject winscreenpopup;
 
+        GameObject resetButton;
+        GameObject continueButton;
+
         WalkingMinion enemy;
         Goal goal;
         bool win = false;
@@ -35,6 +38,7 @@ namespace Hax {
         
 
         KeyboardState previous; //previous state of keyboard
+        MouseState mousePrevious;
 
         private bool paused;
         private bool pausedKeyDown = false;
@@ -79,7 +83,21 @@ namespace Hax {
             winscreenpopup = new GameObject();
             winscreenpopup.Location = new Rectangle(170,100,500,400);
             winscreenpopup.Image = ImageBank.winscreen;
-            
+
+            resetButton = new GameObject();
+            //204,200 / 505,282
+            //int xx=winscreenpopup.Location.X + (int)((204.0 / 505) * winscreenpopup.Location.Width);
+            //int yy=winscreenpopup.Location.Y + (int)((200.0 / 282) * winscreenpopup.Location.Height);
+            //resetButton.Location = new Rectangle(xx, yy, (int)((271.0 / 505) * winscreenpopup.Location.Width)-xx, (int)((220.0 / 282) * winscreenpopup.Location.Height)-yy);
+            resetButton.Location = new Rectangle(370,380,80,35);
+
+            continueButton = new GameObject();
+            continueButton.Location = new Rectangle(resetButton.Location.Right+0, 380, 80, 40);
+            //284,199 / 505,282
+            //xx = winscreenpopup.Location.X + (int)((284.0 / 505) * winscreenpopup.Location.Width);
+           // yy = winscreenpopup.Location.Y + (int)((199.0 / 282) * winscreenpopup.Location.Height);
+            //continueButton.Location = new Rectangle(xx, yy, (int)((365.0 / 505) * winscreenpopup.Location.Width) - xx, (int)((220.0 / 282) * winscreenpopup.Location.Height) - yy);
+
             enemy = new WalkingMinion(player);
         }
 
@@ -148,6 +166,7 @@ namespace Hax {
 
             //get current state of keyboard
             KeyboardState current = Keyboard.GetState();
+            MouseState mouseCurrent = Mouse.GetState();
 
           
 
@@ -176,8 +195,7 @@ namespace Hax {
                     player.DownKey();
                 }
 
-                //store previous state of keyboard
-                previous = current;
+                
 
                 
                 wally.checkObject(player);
@@ -217,8 +235,21 @@ namespace Hax {
 
                 animationTimer++;
             }
+            else if (win == true) {
+                if (mouseCurrent.LeftButton == ButtonState.Pressed) {
+                    if (mouseCurrent.X > resetButton.Location.Left && mouseCurrent.X < resetButton.Location.Right && mouseCurrent.Y > resetButton.Location.Top && mouseCurrent.Y < resetButton.Location.Bottom) {
+                        Reset();
+                    }
+                    if (mouseCurrent.X > continueButton.Location.Left && mouseCurrent.X < continueButton.Location.Right && mouseCurrent.Y > continueButton.Location.Top && mouseCurrent.Y < continueButton.Location.Bottom) {
+                        Exit();
+                    }
+                }
+            }
 
-            
+            //store previous state of keyboard
+            previous = current;
+            mousePrevious = mouseCurrent;
+
             base.Update(gameTime);
         }
 
@@ -241,6 +272,7 @@ namespace Hax {
             wally4.Draw(spriteBatch);
             goal.Draw(spriteBatch);
             player.Draw(spriteBatch);
+
             if (paused == true)
             {
 
@@ -251,6 +283,9 @@ namespace Hax {
             { 
                 winscreenpopup.Draw(spriteBatch);
             }
+            //winscreenpopup.Draw(spriteBatch);
+            //resetButton.Draw(spriteBatch);
+            //continueButton.Draw(spriteBatch);
 
             spriteBatch.End();
 
@@ -289,6 +324,11 @@ namespace Hax {
             
         }
 
-        
+        private void Reset() {
+            player.Reset();
+            enemy.Reset();
+            EndPause(true);
+            win = false;
+        }
     }
 }

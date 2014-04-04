@@ -49,6 +49,7 @@ namespace Hax {
         
         //draw image on location
         public virtual void Draw(SpriteBatch sb) {
+
             if (Image != null) {
                 SpriteEffects se = SpriteEffects.None; //apply effect to flip image if faceLeft is true
                 if (faceLeft) { se = SpriteEffects.FlipHorizontally; }
