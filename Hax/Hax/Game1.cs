@@ -24,13 +24,23 @@ namespace Hax {
 
         Wall wally3;
         Wall wally4;
+        GameObject pausemessagething;
+        GameObject winscreenpopup;
 
         WalkingMinion enemy;
         Goal goal;
-
+        bool win = false;
+        
         int animationTimer = 0;
+        
 
         KeyboardState previous; //previous state of keyboard
+
+        private bool paused;
+        private bool pausedKeyDown = false;
+        private bool pausedForGuide = false;
+
+
 
         public Game1()
             : base() {
@@ -51,6 +61,10 @@ namespace Hax {
 
             map = new Map();
             //spawn a player and a wall here for testing purposes
+            pausemessagething = new GameObject();
+            pausemessagething.Location = new Rectangle(170, 100, 500, 200);
+            pausemessagething.Image = ImageBank.pausemessage;
+
             player = new Player();
             wally = new Wall();
             wally.Location = new Rectangle(50, 400, 100, 100);
@@ -62,7 +76,10 @@ namespace Hax {
             wally4 = new Wall();
             wally4.Location = new Rectangle(550, 300, 100, 100);
             goal = new Goal();
-
+            winscreenpopup = new GameObject();
+            winscreenpopup.Location = new Rectangle(170,100,500,400);
+            winscreenpopup.Image = ImageBank.winscreen;
+            
             enemy = new WalkingMinion(player);
         }
 
@@ -84,9 +101,10 @@ namespace Hax {
             ImageBank.playerWalk.Enqueue(Content.Load<Texture2D>("run1"));
             ImageBank.playerWalk.Enqueue(Content.Load<Texture2D>("run2"));
             ImageBank.playerJump.Enqueue(Content.Load<Texture2D>("mario_jump"));
-
+            ImageBank.winscreen = Content.Load<Texture2D>("win");
             ImageBank.walkingMinion = Content.Load<Texture2D>("walkingMinion");
             ImageBank.goal = Content.Load<Texture2D>("goal");
+            ImageBank.pausemessage = Content.Load<Texture2D>("wordart");
         }
 
         /// <summary>
@@ -106,66 +124,101 @@ namespace Hax {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            if (Keyboard.GetState().IsKeyDown(Keys.P))
+            {
+                BeginPaused(true);
+
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+            {
+                EndPause(true);
+                
+            }
+            if (win)
+            {
+                WinScreen(true);
+                paused = true;
+            }
+
+            
+            //  checkPause(Keyboard.GetState());
+            //checkPauseGuide();
+
             // TODO: Add your update logic here
 
             //get current state of keyboard
             KeyboardState current = Keyboard.GetState();
 
-            //check if a key is currently pressed, but wasn't before, call appropriate method on player
-            if (current.IsKeyDown(Keys.Left)){// && !previous.IsKeyDown(Keys.Left)) {
-                player.LeftKey(); //left key can be held
-            }
-            if (current.IsKeyDown(Keys.Right)) {// && !previous.IsKeyDown(Keys.Right)) {
-                player.RightKey(); //right key can be held
-            }
-            if (current.IsKeyDown(Keys.Up) && !previous.IsKeyDown(Keys.Up)) {
-                player.UpKey();
-            }
-            if (!current.IsKeyDown(Keys.Up) && previous.IsKeyDown(Keys.Up))
+          
+
+            if (paused == false || win == false)
             {
-                player.ReleaseUpKey();
+
+                //check if a key is currently pressed, but wasn't before, call appropriate method on player
+                if (current.IsKeyDown(Keys.Left))
+                {// && !previous.IsKeyDown(Keys.Left)) {
+                    player.LeftKey(); //left key can be held
+                }
+                if (current.IsKeyDown(Keys.Right))
+                {// && !previous.IsKeyDown(Keys.Right)) {
+                    player.RightKey(); //right key can be held
+                }
+                if (current.IsKeyDown(Keys.Up) && !previous.IsKeyDown(Keys.Up))
+                {
+                    player.UpKey();
+                }
+                if (!current.IsKeyDown(Keys.Up) && previous.IsKeyDown(Keys.Up))
+                {
+                    player.ReleaseUpKey();
+                }
+                if (current.IsKeyDown(Keys.Down))
+                {// && !previous.IsKeyDown(Keys.Down)) {
+                    player.DownKey();
+                }
+
+                //store previous state of keyboard
+                previous = current;
+
+                
+                wally.checkObject(player);
+                wally2.checkObject(player);
+                wally3.checkObject(player);
+                wally4.checkObject(player);
+
+                wally.checkObject(enemy);
+                wally2.checkObject(enemy);
+                wally3.checkObject(enemy);
+                wally4.checkObject(enemy);
+
+
+
+                player.Update();
+                map.Update();
+                //enemy.CheckInRange(player);
+                enemy.Update();
+                goal.Update();
+                if (player.Location.Y > 600)
+                {
+                    player.Reset();
+                    enemy.Reset();
+                }
+                /* if (enemy.Location.Y > 600)
+                 {
+                     enemy.Reset();
+                 }*/
+
+
+                if (player.Location.Intersects(goal.Location) && current.IsKeyDown(Keys.Down))
+                {
+                    win = true;
+                   // player.Reset();
+                    //enemy.Reset();
+                }
+
+                animationTimer++;
             }
-            if (current.IsKeyDown(Keys.Down)) {// && !previous.IsKeyDown(Keys.Down)) {
-                player.DownKey();
-            }
 
-            //store previous state of keyboard
-            previous = current;
-
-            wally.checkObject(player);
-            wally2.checkObject(player);
-            wally3.checkObject(player);
-            wally4.checkObject(player);
-
-            wally.checkObject(enemy);
-            wally2.checkObject(enemy);
-            wally3.checkObject(enemy);
-            wally4.checkObject(enemy);
-
-            player.Update();
-            map.Update();
-            //enemy.CheckInRange(player);
-            enemy.Update();
-            goal.Update();
-            if (player.Location.Y > 600) 
-            {
-                player.Reset();
-                enemy.Reset();
-            }
-           /* if (enemy.Location.Y > 600)
-            {
-                enemy.Reset();
-            }*/
             
-
-            if (player.Location.Intersects(goal.Location) && current.IsKeyDown(Keys.Down))
-            {
-                player.Reset();
-                enemy.Reset();
-            }
-
-            animationTimer++;
-
             base.Update(gameTime);
         }
 
@@ -188,10 +241,54 @@ namespace Hax {
             wally4.Draw(spriteBatch);
             goal.Draw(spriteBatch);
             player.Draw(spriteBatch);
+            if (paused == true)
+            {
+
+                pausemessagething.Draw(spriteBatch);
+            }
+
+            if (win == true)
+            { 
+                winscreenpopup.Draw(spriteBatch);
+            }
 
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
+
+        private void BeginPaused(bool UserInitiated)
+        {
+            
+            paused = true;
+            pausedForGuide = !UserInitiated;
+          
+
+        }
+
+        private void EndPause(bool letsplay)
+        {
+            if (letsplay == true)
+            {
+                paused = false;
+                pausedForGuide = false;
+            }
+            
+        }
+
+        private void WinScreen(bool winthing)
+        {
+             if (winthing = true)
+             {
+              win = true;
+             }
+        }
+
+        private void DeathScreen(bool death)
+        { 
+            
+        }
+
+        
     }
 }
