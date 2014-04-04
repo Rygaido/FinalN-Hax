@@ -118,7 +118,7 @@ namespace Hax {
             if (state == Playerstate.jumping) {
                 Animate(ImageBank.playerJump);
             } else if (state == Playerstate.walking) {
-                animationSpeed = 12;
+                animationSpeed = 7;
                 Animate(ImageBank.playerWalk);
             } else if (state == Playerstate.standing) {
                 animationSpeed = 25;

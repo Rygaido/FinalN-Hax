@@ -21,5 +21,7 @@ namespace Hax {
 
         public static Texture2D walkingMinion;
         public static Texture2D goal;
+        public static Texture2D pausemessage;
+        public static Texture2D winscreen;
     }
 }
