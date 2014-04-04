@@ -147,8 +147,6 @@ namespace Hax {
             //enemy.CheckInRange(player);
             enemy.Update();
             goal.Update();
-
-            //resets the player back to the start of the level
             if (player.Location.Y > 600) 
             {
                 player.Reset();
