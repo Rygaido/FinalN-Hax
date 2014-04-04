@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.GamerServices;
 
 //The player's object, subclass of movable and GameObject
 namespace Hax {
-    class Player : Movable{
+    class Player : Unit{
 
         //playerstate tracks the action player is currently performing 
         //facingLeft is tracked seperately
@@ -36,6 +36,8 @@ namespace Hax {
             Location = new Rectangle(50, 250, 57, 87);
             //Location.Width = Image.Width;
             //Location.Height = Image.Height;
+
+            health = 1;
 
             state = Playerstate.standing;
             previous = state;
@@ -153,11 +155,14 @@ namespace Hax {
         public void Reset()
         {
             Location = new Rectangle(50, 250, Location.Width, Location.Height);
+            if (IsDead() == true) {
+                health = 1;
+            }
         }
 
         public void TakeHit()
         {
-            Reset();
+            health = 0;
         }
     }
 }

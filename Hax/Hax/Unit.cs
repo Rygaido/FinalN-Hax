@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.GamerServices;
 //A class that was not in the original tree
 namespace Hax {
     class Unit:Movable {
-        int health;
+        protected int health;
 
         
         //set to false to face right
