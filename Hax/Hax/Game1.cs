@@ -118,7 +118,7 @@ namespace Hax {
             ImageBank.playerStand.Enqueue(Content.Load<Texture2D>("idle2"));
             ImageBank.playerWalk.Enqueue(Content.Load<Texture2D>("run1"));
             ImageBank.playerWalk.Enqueue(Content.Load<Texture2D>("run2"));
-            ImageBank.playerJump.Enqueue(Content.Load<Texture2D>("mario_jump"));
+            ImageBank.playerJump.Enqueue(Content.Load<Texture2D>("jump"));
             ImageBank.winscreen = Content.Load<Texture2D>("win");
             ImageBank.walkingMinion = Content.Load<Texture2D>("walkingMinion");
             ImageBank.goal = Content.Load<Texture2D>("goal");
