@@ -63,7 +63,7 @@ namespace Hax {
         protected override void Initialize() {
             base.Initialize();
 
-            map = new Map();
+            
             //spawn a player and a wall here for testing purposes
             pausemessagething = new GameObject();
             pausemessagething.Location = new Rectangle(170, 100, 500, 200);
@@ -98,7 +98,10 @@ namespace Hax {
            // yy = winscreenpopup.Location.Y + (int)((199.0 / 282) * winscreenpopup.Location.Height);
             //continueButton.Location = new Rectangle(xx, yy, (int)((365.0 / 505) * winscreenpopup.Location.Width) - xx, (int)((220.0 / 282) * winscreenpopup.Location.Height) - yy);
 
-            enemy = new WalkingMinion(player);
+            enemy = new WalkingMinion(player,500,300);
+
+            map = new Map(player);
+            map.Load();
         }
 
         /// <summary>
@@ -195,9 +198,7 @@ namespace Hax {
                     player.DownKey();
                 }
 
-                
-
-                
+                /*
                 wally.checkObject(player);
                 wally2.checkObject(player);
                 wally3.checkObject(player);
@@ -207,8 +208,7 @@ namespace Hax {
                 wally2.checkObject(enemy);
                 wally3.checkObject(enemy);
                 wally4.checkObject(enemy);
-
-
+                */
 
                 player.Update();
                 map.Update();
@@ -217,8 +217,7 @@ namespace Hax {
                 goal.Update();
                 if (player.Location.Y > 600)
                 {
-                    player.Reset();
-                    enemy.Reset();
+                    map.Reset();
                 }
                 /* if (enemy.Location.Y > 600)
                  {
@@ -265,13 +264,13 @@ namespace Hax {
             spriteBatch.Begin();
 
             map.Draw(spriteBatch);
-            enemy.Draw(spriteBatch);
+         /*   enemy.Draw(spriteBatch);
             wally.Draw(spriteBatch);
             wally2.Draw(spriteBatch);
             wally3.Draw(spriteBatch);
             wally4.Draw(spriteBatch);
-            goal.Draw(spriteBatch);
-            player.Draw(spriteBatch);
+            goal.Draw(spriteBatch);*/
+            player.Draw(spriteBatch);//*/
 
             if (paused == true)
             {

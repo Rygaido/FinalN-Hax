@@ -20,10 +20,15 @@ namespace Hax {
         Projectile bullet; //the bullet the enemy shoots, set to null for a non-shooting enemy
         protected Player player;
 
-        public Enemy(Player p)
+        protected int spawnX;
+        protected int spawnY;
+
+        public Enemy(Player p, int x, int y)
         {
             faceLeft = true;
-            Location = new Rectangle(500, 300, 50, 55);
+            Location = new Rectangle(x, y, 50, 55);
+            spawnX = x;
+            spawnY = y;
             player = p;
         }
 
@@ -40,7 +45,7 @@ namespace Hax {
 
         public virtual void Reset()
         {
-            Location = new Rectangle(500, 300, 50, 55);
+            Location = new Rectangle(spawnX, spawnY, 50, 55);
             active = true;
         }
 

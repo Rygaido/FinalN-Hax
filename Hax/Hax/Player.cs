@@ -159,5 +159,9 @@ namespace Hax {
         {
             Reset();
         }
+
+        public void JumpToPoint(Point p) {
+            Location = new Rectangle(p.X, p.Y, Location.Width, Location.Height);
+        }
     }
 }

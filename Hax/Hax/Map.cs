@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
+using System.IO;
 #endregion
 
 //This object was not part of the original tree, but I think controlling objects is going
@@ -21,32 +22,134 @@ namespace Hax {
         private GameObject[,] grid; //contains all game objects
         private Vector2 scroll; //hold the change in X and Y position due to scrolling
 
-        private Queue<Movable> movables; //que holds all moving objects
+        private List<Movable> movables; //List holds all moving objects
         //enemies, projectiles and platforms not constrained to grid
         //Idea: Enemies are loaded from file to grid, so make them inactive until they scroll
         //onto screen, then activate them, remove from grid and add them to queue
+
+        private Player p; //reference to player objecy
+
+        private Point playerSpawn;
+        public Point PlayerSpawn {
+            get { return playerSpawn; }
+            set { playerSpawn = value; }
+        }
+
+        public Map(Player player) {
+            p = player;
+            movables = new List<Movable>();
+        }
 
         //has update and draw methods similar to game object
         //update all movables and grid objects 
         public void Update() {
             //method stub
+            for (int i = 0; i < grid.GetLongLength(0); i++){
+                for (int j = 0; j < grid.GetLongLength(1); j++) {
+                    if (grid[i, j] != null) {
+                        grid[i, j].Update(scroll);
+
+                        try {
+                            Wall w = (Wall)grid[i, j];
+                            w.checkObject(p);
+
+                            foreach (Movable m in movables) {
+                                w.checkObject(m);
+                            }
+                        }
+                        catch (Exception e) {
+
+                        }
+                    }
+                }
+            }//*/
+            foreach (Movable m in movables) {
+                m.Update();
+            }
 
             //use the overload of update: Update(scroll);
             //that way all objects will move with grid instead of screen
         }
+        //draw all gameobjects in grid and movables in list
         public void Draw(SpriteBatch sb) {
+            for (int i = 0; i < grid.GetLongLength(0); i++) {
+                for (int j = 0; j < grid.GetLongLength(1); j++) {
+                    if (grid[i, j] != null) {
+                        grid[i, j].Draw(sb);
+                    }
+                }
+            }
+            foreach (Movable m in movables) {
+                m.Draw(sb);
+            }
             //method stub
+        }
+        //Reset all enemies on map
+        public void Reset() {
+            p.JumpToPoint(playerSpawn);
+
+            foreach (Movable m in movables) {
+                try {
+                    Enemy e = (Enemy)m;
+                    e.Reset();
+                }//*/
+                catch (Exception e) { }
+            }
         }
 
         //check for collisions between player movables and grid
-        public void CheckCollisions(Player p) {
+        public void CheckCollisions() {
             //method stub
         }
 
         //read a file and populated the grid with objects
-        private void Load() {
+        public void Load() {
+            //Get testmap data file
+            BinaryReader reader = new BinaryReader(File.Open("TestMap.dat",FileMode.Open));
+
+            //write number of rows, then columns then the string
+            int r = reader.ReadInt32();
+            int c = reader.ReadInt32();
+            string s = reader.ReadString();
+            char[] chars = s.ToCharArray();
+
+            grid = new GameObject[r, c]; //populate matrix of GameObjects
+            for (int i = 0; i < r; i++){//loop through all rows and cols
+                for (int j = 0; j < c; j++){
+
+                    if (chars[(i * c + j)] == 'a') { //'a' is a blank space
+                        grid[i, j] = null;
+                    }
+                    else if (chars[(i * c + j)] == (char)((int)'a'+50)) { //'a'+50 should be the basic enemy
+                        grid[i, j] = null; //treat as blank space
+
+                        //then add a new minion on spot to Que of Movables
+                        WalkingMinion mini = new WalkingMinion(p, j * 50, i * 50);
+
+                        //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
+                        movables.Add((Movable)mini);
+                    }
+                    else if (chars[(i * c + j)] == (char)((int)'a' + 150)) { //'a'+50 should be the basic enemy
+                        grid[i, j] = null; //treat as blank space
+
+                        playerSpawn = new Point(j*50,i*50);
+                    }
+                    else { //otherwise just place a wall for now
+                        grid[i, j] = new Wall();
+                        grid[i, j].Location = new Rectangle(j * 50, i * 50, 50, 50);
+                    }
+                }
+            }
+
+            reader.Close();
+
+
+
             //method stub
         }
+
+        
+
         private void Clear() { //empty grid and queue, prepare for next room
             //method stub
         }

@@ -17,8 +17,8 @@ namespace Hax
         bool hitWall;
         
 
-        public WalkingMinion(Player p)
-           : base(p){
+        public WalkingMinion(Player p,int spawnX, int spawnY)
+           : base(p,spawnX,spawnY){
             Image = ImageBank.walkingMinion;
             hitWall = false;
             isInRange = false;
@@ -78,7 +78,6 @@ namespace Hax
 
         public override void Reset()
         {
-
             base.Reset();
 
             isInRange = false;
