@@ -60,16 +60,8 @@ namespace Hax {
 
         //
         public virtual void Update() {
-            
+            offset = Map.scroll;
             //method stub
-        }
-
-        //overload to update that changes offset, then calls normal update
-        public virtual void Update(Vector2 scroll) { 
-            offset = scroll;
-            Update();
-
-            //new Rectangle(new Vector2());
         }
 
         protected void Animate(Queue<Texture2D> sprites)

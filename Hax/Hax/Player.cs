@@ -29,7 +29,6 @@ namespace Hax {
         private Boolean canDefend;
         private Boolean canJump=true;//set to true by default for now
 
-
         public Player() { //default constructor
             Image = ImageBank.defaultImage;
 
@@ -136,6 +135,8 @@ namespace Hax {
             }
             previous = state;
 
+            Map.scroll.X += xSpeed;
+            Map.scroll.Y += xSpeed;
             base.Update();
 
             //apply gravity

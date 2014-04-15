@@ -20,7 +20,7 @@ using System.IO;
 namespace Hax {
     class Map {
         private GameObject[,] grid; //contains all game objects
-        private Vector2 scroll; //hold the change in X and Y position due to scrolling
+        public static Vector2 scroll; //hold the change in X and Y position due to scrolling
 
         private List<Movable> movables; //List holds all moving objects
         //enemies, projectiles and platforms not constrained to grid
@@ -47,7 +47,7 @@ namespace Hax {
             for (int i = 0; i < grid.GetLongLength(0); i++){
                 for (int j = 0; j < grid.GetLongLength(1); j++) {
                     if (grid[i, j] != null) {
-                        grid[i, j].Update(scroll);
+                        grid[i, j].Update();
 
                         try {
                             Wall w = (Wall)grid[i, j];
@@ -142,13 +142,7 @@ namespace Hax {
             }
 
             reader.Close();
-
-
-
-            //method stub
         }
-
-        
 
         private void Clear() { //empty grid and queue, prepare for next room
             //method stub
