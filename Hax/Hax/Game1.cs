@@ -26,6 +26,7 @@ namespace Hax {
         Wall wally4;
         GameObject pausemessagething;
         GameObject winscreenpopup;
+        GameObject loosescreenpopup;
 
         GameObject resetButton;
         GameObject continueButton;
@@ -69,6 +70,7 @@ namespace Hax {
             pausemessagething.Location = new Rectangle(170, 100, 500, 200);
             pausemessagething.Image = ImageBank.pausemessage;
 
+
             player = new Player();
             wally = new Wall();
             wally.Location = new Rectangle(50, 400, 100, 100);
@@ -84,6 +86,11 @@ namespace Hax {
             winscreenpopup.Location = new Rectangle(170,100,500,400);
             winscreenpopup.Image = ImageBank.winscreen;
 
+            loosescreenpopup = new GameObject();
+            loosescreenpopup.Location = new Rectangle(170, 100, 500, 400);
+            loosescreenpopup.Image = ImageBank.looseScreen;
+            
+
             resetButton = new GameObject();
             //204,200 / 505,282
             //int xx=winscreenpopup.Location.X + (int)((204.0 / 505) * winscreenpopup.Location.Width);
@@ -97,6 +104,8 @@ namespace Hax {
             //xx = winscreenpopup.Location.X + (int)((284.0 / 505) * winscreenpopup.Location.Width);
            // yy = winscreenpopup.Location.Y + (int)((199.0 / 282) * winscreenpopup.Location.Height);
             //continueButton.Location = new Rectangle(xx, yy, (int)((365.0 / 505) * winscreenpopup.Location.Width) - xx, (int)((220.0 / 282) * winscreenpopup.Location.Height) - yy);
+
+
 
             enemy = new WalkingMinion(player,500,300);
 
@@ -126,6 +135,7 @@ namespace Hax {
             ImageBank.walkingMinion = Content.Load<Texture2D>("walkingMinion");
             ImageBank.goal = Content.Load<Texture2D>("goal");
             ImageBank.pausemessage = Content.Load<Texture2D>("wordart");
+            ImageBank.looseScreen = Content.Load<Texture2D>("gameoverscreen");
         }
 
         /// <summary>
@@ -145,12 +155,16 @@ namespace Hax {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.P))
+            //get current state of keyboard
+            KeyboardState current = Keyboard.GetState();
+            MouseState mouseCurrent = Mouse.GetState();
+
+            if (current.IsKeyDown(Keys.P))
             {
                 BeginPaused(true);
 
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+            if (current.IsKeyDown(Keys.Enter))
             {
                 EndPause(true);
                 
@@ -159,6 +173,30 @@ namespace Hax {
             {
                 WinScreen(true);
                 paused = true;
+                resetButton.Location = new Rectangle(370, 380, 80, 35);
+                 continueButton.Location = new Rectangle(resetButton.Location.Right + 0, 380, 80, 40);
+                 if (mouseCurrent.LeftButton == ButtonState.Pressed) {
+                     if (mouseCurrent.X > resetButton.Location.Left && mouseCurrent.X < resetButton.Location.Right && mouseCurrent.Y > resetButton.Location.Top && mouseCurrent.Y < resetButton.Location.Bottom) {
+                         Reset();
+                     }
+                     if (mouseCurrent.X > continueButton.Location.Left && mouseCurrent.X < continueButton.Location.Right && mouseCurrent.Y > continueButton.Location.Top && mouseCurrent.Y < continueButton.Location.Bottom) {
+                         Exit();
+                     }
+                 }
+            }
+            if (player.IsDead()) {
+                paused = true;
+
+                continueButton.Location = new Rectangle(360, 374, 80, 35);
+                resetButton.Location = new Rectangle(continueButton.Location.Right, 374, 80, 30);
+                if (mouseCurrent.LeftButton == ButtonState.Pressed) {
+                    if (mouseCurrent.X > resetButton.Location.Left && mouseCurrent.X < resetButton.Location.Right && mouseCurrent.Y > resetButton.Location.Top && mouseCurrent.Y < resetButton.Location.Bottom) {
+                        Reset();
+                    }
+                    if (mouseCurrent.X > continueButton.Location.Left && mouseCurrent.X < continueButton.Location.Right && mouseCurrent.Y > continueButton.Location.Top && mouseCurrent.Y < continueButton.Location.Bottom) {
+                        Exit();
+                    }
+                }
             }
 
             
@@ -167,13 +205,9 @@ namespace Hax {
 
             // TODO: Add your update logic here
 
-            //get current state of keyboard
-            KeyboardState current = Keyboard.GetState();
-            MouseState mouseCurrent = Mouse.GetState();
 
-          
 
-            if (paused == false || win == false)
+            if (paused == false) 
             {
 
                 //check if a key is currently pressed, but wasn't before, call appropriate method on player
@@ -211,14 +245,12 @@ namespace Hax {
                 */
 
                 player.Update();
+
                 map.Update();
                 //enemy.CheckInRange(player);
                 enemy.Update();
                 goal.Update();
-                if (player.Location.Y > 600)
-                {
-                    map.Reset();
-                }
+                
                 /* if (enemy.Location.Y > 600)
                  {
                      enemy.Reset();
@@ -281,6 +313,10 @@ namespace Hax {
             if (win == true)
             { 
                 winscreenpopup.Draw(spriteBatch);
+
+            }
+            if (player.IsDead()) {
+                loosescreenpopup.Draw(spriteBatch);
             }
             //winscreenpopup.Draw(spriteBatch);
             //resetButton.Draw(spriteBatch);
@@ -324,8 +360,8 @@ namespace Hax {
         }
 
         private void Reset() {
-            player.Reset();
-            enemy.Reset();
+            //player.Reset();
+            map.Reset();
             EndPause(true);
             win = false;
         }

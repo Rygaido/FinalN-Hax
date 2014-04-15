@@ -46,26 +46,6 @@ namespace Hax {
                     }
                 }
 
-                /*
-                if (mov.Location.Top > Location.Bottom+1){ //check object is within reach on bottomside
-                    if (mov.Location.Top < Location.Top-1){ //check object is within reach on topside
-                        if (mov.Location.Right <= Location.Left)
-                        { //check object is to the left of wall's leftmost edge
-
-                            //all 3 requirements met, restrict object's xspeed so that it can't pass through object
-                            if (mov.xSpeed >= Location.Left - mov.Location.Right)
-                            //if(mov.Location.X  >= Location.X+Location.Width)
-                            {
-                                //mov.ySpeed = 0;
-                                mov.xSpeed = 0;
-                                mov.collidingWithWall = true;
-                            }
-                        }
-
-                        //Location.
-                    }
-                }*/
-
                 if (Location.Intersects(mov.Location))
                 {// && mov.Previous.Right < Location.Left && mov.Previous.Bottom > Location.Top){
                     if (mov.Previous.Right < Location.Center.X)
@@ -76,6 +56,41 @@ namespace Hax {
 
                     if (mov.Previous.Left > Location.Center.X)
                     {
+                        mov.xSpeed = 0;
+                        mov.Location = new Rectangle(Location.Right, mov.Location.Y, mov.Location.Width, mov.Location.Height);
+                    }
+                }
+            }
+        }
+
+        //platform checks movable-gameobject's location and yspeed to see if it needs to catch object and do what platforms do
+        public void checkPlayer(Movable mov) {
+
+            if (mov.Active == true) {
+                if (mov.Location.X > Location.X - mov.Location.Width) { //check object is within reach on leftside
+                    if (mov.Location.X < Location.X + Location.Width) { //check object is within reach on rightside
+                        int foot = mov.Location.Y + mov.Location.Height; //store Y value of lowest point on mov object
+                        if (foot <= Location.Y) { //check object is above platform's surface
+
+                            //all 3 requirements met, restrict object's yspeed so that it can't pass through object
+                            if (mov.ySpeed >= Location.Y - foot) {
+                                //mov.ySpeed = 0;
+                                mov.ySpeed = Location.Y - foot;
+                                mov.Landing();
+                            }
+                        }
+                    }
+                }
+
+                if (Location.Intersects(mov.Location)) {// && mov.Previous.Right < Location.Left && mov.Previous.Bottom > Location.Top){
+                    if (mov.Previous.Right < Location.Center.X) {
+                        Map.scroll.X += mov.xSpeed;
+                        mov.xSpeed = 0;
+                        mov.Location = new Rectangle(Location.Left - mov.Location.Width, mov.Location.Y, mov.Location.Width, mov.Location.Height);
+                    }
+
+                    if (mov.Previous.Left > Location.Center.X) {
+                        Map.scroll.X += mov.xSpeed;
                         mov.xSpeed = 0;
                         mov.Location = new Rectangle(Location.Right, mov.Location.Y, mov.Location.Width, mov.Location.Height);
                     }

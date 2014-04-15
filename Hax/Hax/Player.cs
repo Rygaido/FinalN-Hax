@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.GamerServices;
 
 //The player's object, subclass of movable and GameObject
 namespace Hax {
-    class Player : Movable{
+    class Player : Unit{
 
         //playerstate tracks the action player is currently performing 
         //facingLeft is tracked seperately
@@ -29,13 +29,17 @@ namespace Hax {
         private Boolean canDefend;
         private Boolean canJump=true;//set to true by default for now
 
+        public Map map;
+
         public Player() { //default constructor
+            health = 1;
             Image = ImageBank.defaultImage;
 
             Location = new Rectangle(50, 250, 57, 87);
             //Location.Width = Image.Width;
             //Location.Height = Image.Height;
 
+            //map = m;
             state = Playerstate.standing;
             previous = state;
         }
@@ -107,11 +111,16 @@ namespace Hax {
 
         //overload of update method
         public override void Update() {
+
+            
             if (state == Playerstate.standing) { //if player is standing still, deccelarate
                 if (xSpeed > 0) { xSpeed-=acceleration; }
                 else if (xSpeed < 0) { xSpeed += acceleration; } 
                 else { xSpeed = 0; } //Bugfix: if caught in small space between acc and -acc, set speed to 0 to avoid sliding
             }
+
+            Map.scroll.X -= xSpeed;
+            Map.scroll.Y -= ySpeed;
 
             //update player's image based on current state
             if (state == Playerstate.jumping) {
@@ -135,13 +144,13 @@ namespace Hax {
             }
             previous = state;
 
-            Map.scroll.X += xSpeed;
-            Map.scroll.Y += xSpeed;
             base.Update();
+
 
             //apply gravity
             ySpeed += Movable.gravity;
             //ySpeed = 1;
+
         }
 
         public override void Landing() {
@@ -153,12 +162,23 @@ namespace Hax {
 
         public void Reset()
         {
-            Location = new Rectangle(50, 250, Location.Width, Location.Height);
+            
+            //Map.scroll.X = map.PlayerSpawn.X+150;
+           // Map.scroll.Y = map.PlayerSpawn.Y-450;
+            Location = new Rectangle(map.PlayerSpawn.X, map.PlayerSpawn.Y-100, Location.Width, Location.Height);
+            /*
+            Map.scroll.X = RealLocation.X;
+            Map.scroll.Y = RealLocation.Y;*/
+
+            Map.scroll.X = Location.X + 100;
+            Map.scroll.Y = Location.Y + 250;
+            health = 1;
         }
 
         public void TakeHit()
         {
-            Reset();
+            base.TakeDamage(1);
+            //Reset();
         }
 
         public void JumpToPoint(Point p) {

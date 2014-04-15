@@ -88,7 +88,9 @@
     <Content Include="Content\enemy.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\gameoverscreen.png" />
+    <Content Include="Content\gameoverscreen.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\goal.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

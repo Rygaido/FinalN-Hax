@@ -20,6 +20,8 @@ using System.IO;
 namespace Hax {
     class Map {
         private GameObject[,] grid; //contains all game objects
+        private int row;
+        private int col;
         public static Vector2 scroll; //hold the change in X and Y position due to scrolling
 
         private List<Movable> movables; //List holds all moving objects
@@ -36,13 +38,21 @@ namespace Hax {
         }
 
         public Map(Player player) {
+            //playerSpawn = new Point(0, 0);
             p = player;
+            p.map = this;
             movables = new List<Movable>();
         }
 
         //has update and draw methods similar to game object
         //update all movables and grid objects 
         public void Update() {
+            
+            ///*
+            if (p.Location.Y > row*100) {
+                Reset();
+            }//*/
+
             //method stub
             for (int i = 0; i < grid.GetLongLength(0); i++){
                 for (int j = 0; j < grid.GetLongLength(1); j++) {
@@ -51,7 +61,7 @@ namespace Hax {
 
                         try {
                             Wall w = (Wall)grid[i, j];
-                            w.checkObject(p);
+                            w.checkPlayer(p);
 
                             foreach (Movable m in movables) {
                                 w.checkObject(m);
@@ -86,7 +96,7 @@ namespace Hax {
         }
         //Reset all enemies on map
         public void Reset() {
-            p.JumpToPoint(playerSpawn);
+            p.Reset();
 
             foreach (Movable m in movables) {
                 try {
@@ -109,7 +119,9 @@ namespace Hax {
 
             //write number of rows, then columns then the string
             int r = reader.ReadInt32();
+            row = r;
             int c = reader.ReadInt32();
+            col = c;
             string s = reader.ReadString();
             char[] chars = s.ToCharArray();
 
@@ -124,7 +136,7 @@ namespace Hax {
                         grid[i, j] = null; //treat as blank space
 
                         //then add a new minion on spot to Que of Movables
-                        WalkingMinion mini = new WalkingMinion(p, j * 50, i * 50);
+                        WalkingMinion mini = new WalkingMinion(p, j * 50, i * 50-30);
 
                         //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
                         movables.Add((Movable)mini);
