@@ -171,7 +171,7 @@ namespace Hax {
             Map.scroll.Y = RealLocation.Y;*/
 
             Map.scroll.X = Location.X + 100;
-            Map.scroll.Y = Location.Y + 250;
+            Map.scroll.Y = Location.Y - 200;
             health = 1;
         }
 

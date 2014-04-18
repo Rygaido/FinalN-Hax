@@ -13,48 +13,50 @@ namespace Hax
 {
     class WalkingMinion:Enemy
     {
-        bool isInRange;
-        bool hitWall;
-        
+        int runSpeed = -5;
+        int range = 200;
 
         public WalkingMinion(Player p,int spawnX, int spawnY)
            : base(p,spawnX,spawnY){
-            Image = ImageBank.walkingMinion;
-            hitWall = false;
-            isInRange = false;
+               Image = ImageBank.walkingMinion[0];
+
+            animationSpeed = 15;
         }
 
         public override void Update()
         {
-            if (Active == true)
-            {
+            //enemy only behaves if not dead
+            if (current != Enemystate.dead){
                 base.Update();
 
-                CollideWithPlayer();
 
-                if (isInRange == true && xSpeed == 0)
+                //player intersects with enemy location
+                if (Location.Intersects(player.Location))
                 {
-                    hitWall = !hitWall;
+                    CollideWithPlayer();
                 }
 
-                //////
-                if (isInRange == false)
+                //changes enemy direction if enemy walked into a wall
+                if (current==Enemystate.walking && xSpeed == 0)
+                {
+                    runSpeed = -runSpeed;
+                }
+
+                //if enemy is standing, check if player is nearby to start walking
+                if (current==Enemystate.standing )
                 {
                     CheckInRange();
                 }
 
-                if (isInRange == true)
+                if (current==Enemystate.walking) //set speed for if enemy is walking
                 {
-                    if (hitWall == false)
-                    {
-                        xSpeed = -10;
-                    }
-                    else
-                    {
-                        xSpeed = 10;
-                    }
+
+                    Animate(ImageBank.walkingMinion);
+                    //if (hitWall == false) //set speed, if hitwall then direction is reversed
+                    xSpeed = runSpeed;
+                    
                 }
-                else
+                else //enemy is doing something other than walking
                 {
                     xSpeed = 0;
                 }
@@ -68,50 +70,42 @@ namespace Hax
            
         }
 
+        //player gets within range on X and Y coordinates, set state to walk
         public void CheckInRange()
         {
-            if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(200))
+            if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(range) && Math.Abs(player.Location.Y - Location.Y) <= Math.Abs(range))
             {
-                isInRange = true;
+                current = Enemystate.walking;
             }
         }
 
+        //Reset the enemy 
         public override void Reset()
         {
             base.Reset();
 
-            isInRange = false;
-            hitWall = false;
+            //standing is default behavior
+            current = Enemystate.standing;
         }
 
+        //override draw method
         public override void Draw(SpriteBatch sb)
         {
-            if (active == true)
+            if (current != Enemystate.dead) //draw normally unless dead
             {
                 base.Draw(sb);
             }
             else
-            {
+            { //draw upsidedown if dead
                 SpriteEffects se = SpriteEffects.FlipVertically;
 
                 sb.Draw(Image, RealLocation, null, Color.White, 0.0f, new Vector2(0, 0), se, 0.0f);
             }
         }
 
-        public override void CollideWithPlayer()
-        {
-            
-            if (Location.Intersects(player.Location)){// && mov.Previous.Right < Location.Left && mov.Previous.Bottom > Location.Top){
-                    if (player.Previous.Bottom < Location.Center.Y)
-                    {
-                        player.ySpeed =-15;
-                        Active = false;
-                    }
-                    else
-                    {
-                        base.CollideWithPlayer();
-                    }
-            }
+        //Enemy touches player
+        public override void CollideWithPlayer(){
+            base.CollideWithPlayer();
         }
 
     }

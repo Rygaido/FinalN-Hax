@@ -15,9 +15,10 @@ namespace Hax {
 
         //enum state for behavior of enemy// standing still, walk straight, walk after player
         //may want to add more states later
-        enum Enemystate { standing, walking, chasing};
+        protected enum Enemystate { standing, walking, chasing, shooting, dead};
 
-        Projectile bullet; //the bullet the enemy shoots, set to null for a non-shooting enemy
+        protected Enemystate current=Enemystate.standing;
+        protected Projectile bullet; //the bullet the enemy shoots, set to null for a non-shooting enemy
         protected Player player;
 
         protected int spawnX;
@@ -51,7 +52,13 @@ namespace Hax {
 
         public virtual void CollideWithPlayer()
         {
-            if (player.Location.Intersects(Location))
+            //if player hits enemy on top
+            if (player.Previous.Bottom < Location.Center.Y)
+            {
+                player.ySpeed = -15;//bounces player
+                current = Enemystate.dead; //kill enemy
+            }
+            else
             {
                 player.TakeHit();
             }

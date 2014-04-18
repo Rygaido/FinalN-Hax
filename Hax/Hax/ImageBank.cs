@@ -15,11 +15,11 @@ namespace Hax {
         public static Texture2D defaultImage; //default image assigned to objects, used for testing
         public static Texture2D wallImage;
 
-        public static Queue<Texture2D> playerStand = new Queue<Texture2D>();
-        public static Queue<Texture2D> playerWalk = new Queue<Texture2D>();
-        public static Queue<Texture2D> playerJump = new Queue<Texture2D>();
+        public static List<Texture2D> playerStand = new List<Texture2D>();
+        public static List<Texture2D> playerWalk = new List<Texture2D>();
+        public static List<Texture2D> playerJump = new List<Texture2D>();
 
-        public static Texture2D walkingMinion;
+        public static List<Texture2D> walkingMinion=new List<Texture2D>();
         public static Texture2D goal;
         public static Texture2D pausemessage;
         public static Texture2D winscreen;

@@ -19,11 +19,7 @@ namespace Hax {
 
         Map map; //map contains a grid of game objects read from a file
         Player player; //THE player object
-        Wall wally; //a lone wall used for testing
-        Wall wally2; //another lone wall used for testing
-
-        Wall wally3;
-        Wall wally4;
+        
         GameObject pausemessagething;
         GameObject winscreenpopup;
         GameObject loosescreenpopup;
@@ -31,8 +27,6 @@ namespace Hax {
         GameObject resetButton;
         GameObject continueButton;
 
-        WalkingMinion enemy;
-        Goal goal;
         bool win = false;
         
         int animationTimer = 0;
@@ -72,16 +66,6 @@ namespace Hax {
 
 
             player = new Player();
-            wally = new Wall();
-            wally.Location = new Rectangle(50, 400, 100, 100);
-            wally2 = new Wall();
-            wally2.Location = new Rectangle(300, 400, 500, 100);
-           // wally2.Location = new Rectangle(125, 300, 900, 200);
-            wally3 = new Wall();
-            //wally3.Location = new Rectangle(300, 300, 100, 100);
-            wally4 = new Wall();
-            wally4.Location = new Rectangle(550, 300, 100, 100);
-            goal = new Goal();
             winscreenpopup = new GameObject();
             winscreenpopup.Location = new Rectangle(170,100,500,400);
             winscreenpopup.Image = ImageBank.winscreen;
@@ -105,10 +89,6 @@ namespace Hax {
            // yy = winscreenpopup.Location.Y + (int)((199.0 / 282) * winscreenpopup.Location.Height);
             //continueButton.Location = new Rectangle(xx, yy, (int)((365.0 / 505) * winscreenpopup.Location.Width) - xx, (int)((220.0 / 282) * winscreenpopup.Location.Height) - yy);
 
-
-
-            enemy = new WalkingMinion(player,500,300);
-
             map = new Map(player);
             map.Load();
         }
@@ -122,17 +102,18 @@ namespace Hax {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            ImageBank.defaultImage=Content.Load<Texture2D>("enemy");
+            ImageBank.defaultImage=Content.Load<Texture2D>("enemy1");
             ImageBank.wallImage  = Content.Load<Texture2D>("platform");
 
             //mario sprites are just placeholders //remember to replace them before releasing game
-            ImageBank.playerStand.Enqueue(Content.Load<Texture2D>("idle1"));
-            ImageBank.playerStand.Enqueue(Content.Load<Texture2D>("idle2"));
-            ImageBank.playerWalk.Enqueue(Content.Load<Texture2D>("run1"));
-            ImageBank.playerWalk.Enqueue(Content.Load<Texture2D>("run2"));
-            ImageBank.playerJump.Enqueue(Content.Load<Texture2D>("jump"));
+            ImageBank.playerStand.Add(Content.Load<Texture2D>("idle1"));
+            ImageBank.playerStand.Add(Content.Load<Texture2D>("idle2"));
+            ImageBank.playerWalk.Add(Content.Load<Texture2D>("run1"));
+            ImageBank.playerWalk.Add(Content.Load<Texture2D>("run2"));
+            ImageBank.playerJump.Add(Content.Load<Texture2D>("jump"));
             ImageBank.winscreen = Content.Load<Texture2D>("win");
-            ImageBank.walkingMinion = Content.Load<Texture2D>("walkingMinion");
+            ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1"));
+            ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1_flip"));
             ImageBank.goal = Content.Load<Texture2D>("goal");
             ImageBank.pausemessage = Content.Load<Texture2D>("wordart");
             ImageBank.looseScreen = Content.Load<Texture2D>("gameoverscreen");
@@ -204,9 +185,6 @@ namespace Hax {
             //checkPauseGuide();
 
             // TODO: Add your update logic here
-
-
-
             if (paused == false) 
             {
 
@@ -232,32 +210,11 @@ namespace Hax {
                     player.DownKey();
                 }
 
-                /*
-                wally.checkObject(player);
-                wally2.checkObject(player);
-                wally3.checkObject(player);
-                wally4.checkObject(player);
-
-                wally.checkObject(enemy);
-                wally2.checkObject(enemy);
-                wally3.checkObject(enemy);
-                wally4.checkObject(enemy);
-                */
-
                 player.Update();
 
                 map.Update();
-                //enemy.CheckInRange(player);
-                enemy.Update();
-                goal.Update();
                 
-                /* if (enemy.Location.Y > 600)
-                 {
-                     enemy.Reset();
-                 }*/
-
-
-                if (player.Location.Intersects(goal.Location) && current.IsKeyDown(Keys.Down))
+                if (map.CheckWin && current.IsKeyDown(Keys.Down))
                 {
                     win = true;
                    // player.Reset();

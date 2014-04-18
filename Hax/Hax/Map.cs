@@ -31,6 +31,12 @@ namespace Hax {
 
         private Player p; //reference to player objecy
 
+        private Goal goal;
+        private bool checkWin;
+        public bool CheckWin{
+            get { return checkWin; }
+        }
+
         private Point playerSpawn;
         public Point PlayerSpawn {
             get { return playerSpawn; }
@@ -53,6 +59,8 @@ namespace Hax {
                 Reset();
             }//*/
 
+            checkWin = p.Location.Intersects(goal.Location);
+
             //method stub
             for (int i = 0; i < grid.GetLongLength(0); i++){
                 for (int j = 0; j < grid.GetLongLength(1); j++) {
@@ -67,9 +75,9 @@ namespace Hax {
                                 w.checkObject(m);
                             }
                         }
-                        catch (Exception e) {
+                        catch (Exception e) {}
 
-                        }
+
                     }
                 }
             }//*/
@@ -80,6 +88,8 @@ namespace Hax {
             //use the overload of update: Update(scroll);
             //that way all objects will move with grid instead of screen
         }
+
+
         //draw all gameobjects in grid and movables in list
         public void Draw(SpriteBatch sb) {
             for (int i = 0; i < grid.GetLongLength(0); i++) {
@@ -129,10 +139,12 @@ namespace Hax {
             for (int i = 0; i < r; i++){//loop through all rows and cols
                 for (int j = 0; j < c; j++){
 
-                    if (chars[(i * c + j)] == 'a') { //'a' is a blank space
+                    char m = chars[(i * c + j)];
+
+                    if (m == 'a') { //'a' is a blank space
                         grid[i, j] = null;
                     }
-                    else if (chars[(i * c + j)] == (char)((int)'a'+50)) { //'a'+50 should be the basic enemy
+                    else if (m == (char)((int)'a'+50)) { //'a'+50 should be the basic enemy
                         grid[i, j] = null; //treat as blank space
 
                         //then add a new minion on spot to Que of Movables
@@ -141,10 +153,17 @@ namespace Hax {
                         //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
                         movables.Add((Movable)mini);
                     }
-                    else if (chars[(i * c + j)] == (char)((int)'a' + 150)) { //'a'+50 should be the basic enemy
+                    else if (m == (char)((int)'a' + 150)) { //'a'+150 Player spawn
                         grid[i, j] = null; //treat as blank space
 
                         playerSpawn = new Point(j*50,i*50);
+                    }
+                    else if (m == (char)((int)'a' + 151))
+                    { //'a'+151 Player goal
+                        grid[i, j] = new Goal(); //treat as blank space
+
+                        grid[i,j].Location= new Rectangle(j * 50, i * 50,50,50);
+                        goal = (Goal)grid[i, j];
                     }
                     else { //otherwise just place a wall for now
                         grid[i, j] = new Wall();

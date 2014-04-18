@@ -20,6 +20,7 @@ namespace Hax {
 
         protected int animationTimer = 0;
         protected int animationSpeed = 25;
+        protected int animationFrame = 0;
 
         //is object facing left? should image be mirrored
         protected bool faceLeft;
@@ -42,7 +43,7 @@ namespace Hax {
 
         public GameObject() { //default constructor
             Image = ImageBank.defaultImage;
-
+           
             location.Width = Image.Width;
             location.Height = Image.Height;
         }
@@ -64,13 +65,22 @@ namespace Hax {
             //method stub
         }
 
-        protected void Animate(Queue<Texture2D> sprites)
+        protected void Animate(List<Texture2D> s)
         {
+            Texture2D[] sprites = s.ToArray();
+
             if (animationTimer > animationSpeed)
             {
-                Image = sprites.Dequeue();
-                sprites.Enqueue(Image);
+                animationFrame++;
+                if (animationFrame >= sprites.Length)
+                {
+                    animationFrame = 0;
+                }
+
+                Image = sprites[animationFrame];
+                
                 animationTimer = 0;
+                
             }
 
             animationTimer++;
