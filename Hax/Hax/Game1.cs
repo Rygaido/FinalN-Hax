@@ -113,10 +113,12 @@ namespace Hax {
             ImageBank.playerJump.Add(Content.Load<Texture2D>("jump"));
             ImageBank.winscreen = Content.Load<Texture2D>("win");
             ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1"));
-            ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1_flip"));
+            ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1_flip")); 
+            ImageBank.shootingMinion.Add(Content.Load<Texture2D>("enemy2idle"));
             ImageBank.goal = Content.Load<Texture2D>("goal");
             ImageBank.pausemessage = Content.Load<Texture2D>("wordart");
             ImageBank.looseScreen = Content.Load<Texture2D>("gameoverscreen");
+            ImageBank.bullet = Content.Load<Texture2D>("New Canvas");
         }
 
         /// <summary>
@@ -305,7 +307,7 @@ namespace Hax {
 
         private void WinScreen(bool winthing)
         {
-             if (winthing = true)
+             if (winthing == true)
              {
               win = true;
              }

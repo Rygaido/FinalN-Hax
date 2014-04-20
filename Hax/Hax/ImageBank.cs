@@ -20,6 +20,10 @@ namespace Hax {
         public static List<Texture2D> playerJump = new List<Texture2D>();
 
         public static List<Texture2D> walkingMinion=new List<Texture2D>();
+        public static List<Texture2D> shootingMinion = new List<Texture2D>();
+
+        public static Texture2D bullet;
+
         public static Texture2D goal;
         public static Texture2D pausemessage;
         public static Texture2D winscreen;

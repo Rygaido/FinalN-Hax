@@ -34,32 +34,30 @@ namespace Hax {
         }
 
         //spawn a bullet
-        public void Shoot() {
+        public virtual void Shoot() {
             //method stub
         }
 
-        public override void Update()
-        {
+        public override void Update(){ //apply the gravity
            base.Update();
            ySpeed += Movable.gravity;
         }
 
-        public virtual void Reset()
-        {
-            Location = new Rectangle(spawnX, spawnY, 50, 55);
+        public override void Reset(){ //overide reset, enemies respawn and set to standing
             active = true;
+
+            Location = new Rectangle(spawnX, spawnY, Location.Width, Location.Height);
+
+            current = Enemystate.standing;
         }
 
-        public virtual void CollideWithPlayer()
-        {
+        public virtual void CollideWithPlayer(){
             //if player hits enemy on top
-            if (player.Previous.Bottom < Location.Center.Y)
-            {
+            if (player.Previous.Bottom < Location.Center.Y){
                 player.ySpeed = -15;//bounces player
                 current = Enemystate.dead; //kill enemy
             }
-            else
-            {
+            else{
                 player.TakeHit();
             }
         }

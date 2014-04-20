@@ -13,6 +13,11 @@ using Microsoft.Xna.Framework.GamerServices;
 namespace Hax {
     class Movable : GameObject{
 
+        protected Map map; //reference to the map object
+        public Map Map { //getter and setter property
+            get { return map; }
+            set { map = value; }
+        }
         protected Boolean active=true; //whether or not object is in use
         //if not active do not draw or check collisions
 
@@ -58,9 +63,19 @@ namespace Hax {
             Location = new Rectangle(x,y,Location.Width,Location.Height);
         }
 
+        public override void Draw(SpriteBatch sb) {
+            if (Active) {
+                base.Draw(sb);
+            }
+        }
+
         //call this method on an object that has landed on a platform
         public virtual void Landing() {
 
         }
+        ///*
+        public virtual void Reset() {
+
+        }//*/
     }
 }

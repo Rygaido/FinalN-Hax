@@ -22,6 +22,8 @@ namespace Hax {
         protected int animationSpeed = 25;
         protected int animationFrame = 0;
 
+        protected Color col=Color.White; //control color of draw method for debug purposes
+
         //is object facing left? should image be mirrored
         protected bool faceLeft;
 
@@ -55,7 +57,7 @@ namespace Hax {
                 SpriteEffects se = SpriteEffects.None; //apply effect to flip image if faceLeft is true
                 if (faceLeft) { se = SpriteEffects.FlipHorizontally; }
 
-                sb.Draw(Image, RealLocation, null, Color.White, 0.0f, new Vector2(0, 0), se, 0.0f);
+                sb.Draw(Image, RealLocation, null, col, 0.0f, new Vector2(0, 0), se, 0.0f);
             }
         }
 

@@ -25,6 +25,12 @@ namespace Hax {
         public static Vector2 scroll; //hold the change in X and Y position due to scrolling
 
         private List<Movable> movables; //List holds all moving objects
+        public List<Movable> Movables {
+            get { return movables; }
+            set { movables = value; }
+        }
+        private List<Movable> temp; //holds a duplicate list for foreachloops
+        private List<Movable> resetList;
         //enemies, projectiles and platforms not constrained to grid
         //Idea: Enemies are loaded from file to grid, so make them inactive until they scroll
         //onto screen, then activate them, remove from grid and add them to queue
@@ -46,14 +52,17 @@ namespace Hax {
         public Map(Player player) {
             //playerSpawn = new Point(0, 0);
             p = player;
-            p.map = this;
+            p.Map = this;
             movables = new List<Movable>();
+
         }
 
         //has update and draw methods similar to game object
         //update all movables and grid objects 
         public void Update() {
-            
+
+            temp = new List<Movable>(movables);
+
             ///*
             if (p.Location.Y > row*100) {
                 Reset();
@@ -71,18 +80,24 @@ namespace Hax {
                             Wall w = (Wall)grid[i, j];
                             w.checkPlayer(p);
 
-                            foreach (Movable m in movables) {
+                            foreach (Movable m in temp) {
                                 w.checkObject(m);
                             }
                         }
                         catch (Exception e) {}
-
+                        
 
                     }
                 }
             }//*/
-            foreach (Movable m in movables) {
-                m.Update();
+            foreach (Movable m in temp) {
+                if (m.Active == true) { //only update active movables
+                    m.Update();
+                }
+                else {//remove inactive movables
+                    
+                    movables.Remove(m);
+                }
             }
 
             //use the overload of update: Update(scroll);
@@ -92,6 +107,9 @@ namespace Hax {
 
         //draw all gameobjects in grid and movables in list
         public void Draw(SpriteBatch sb) {
+
+            temp = new List<Movable>(movables);
+
             for (int i = 0; i < grid.GetLongLength(0); i++) {
                 for (int j = 0; j < grid.GetLongLength(1); j++) {
                     if (grid[i, j] != null) {
@@ -99,21 +117,29 @@ namespace Hax {
                     }
                 }
             }
-            foreach (Movable m in movables) {
+            foreach (Movable m in temp) {
                 m.Draw(sb);
             }
-            //method stub
         }
         //Reset all enemies on map
         public void Reset() {
             p.Reset();
 
-            foreach (Movable m in movables) {
-                try {
+            movables = new List<Movable>(resetList);
+            temp = new List<Movable>(movables);
+
+            foreach (Movable m in temp) {
+                /*try {
                     Enemy e = (Enemy)m;
                     e.Reset();
-                }//*/
+                }
                 catch (Exception e) { }
+                try {
+                    Projectile bull= (Projectile)m;
+                    bull.Reset();
+                }
+                catch (Exception e) { }*/
+                m.Reset();
             }
         }
 
@@ -124,8 +150,15 @@ namespace Hax {
 
         //read a file and populated the grid with objects
         public void Load() {
+            BinaryReader reader;
+
             //Get testmap data file
-            BinaryReader reader = new BinaryReader(File.Open("TestMap.dat",FileMode.Open));
+            try {
+                reader = new BinaryReader(File.Open("TestMap.dat", FileMode.Open));
+            }
+            catch (Exception e) {
+                throw e;
+            }
 
             //write number of rows, then columns then the string
             int r = reader.ReadInt32();
@@ -150,8 +183,21 @@ namespace Hax {
                         //then add a new minion on spot to Que of Movables
                         WalkingMinion mini = new WalkingMinion(p, j * 50, i * 50-30);
 
+                        mini.Map = this; //give enemy reference to this map object
+
                         //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
                         movables.Add((Movable)mini);
+                    }
+                    else if (m == (char)((int)'a' + 51)) { //'a'+50 should be the basic enemy
+                        grid[i, j] = null; //treat as blank space
+
+                        //then add a new minion on spot to Que of Movables
+                        ShootingMinion e2= new ShootingMinion(p, j * 50, i * 50 - 30);
+
+                        e2.Map = this; //give enemy reference to this map object
+
+                        //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
+                        movables.Add((Movable)e2);
                     }
                     else if (m == (char)((int)'a' + 150)) { //'a'+150 Player spawn
                         grid[i, j] = null; //treat as blank space
@@ -173,6 +219,9 @@ namespace Hax {
             }
 
             reader.Close();
+
+            resetList = new List<Movable>(Movables);
+            Reset();
         }
 
         private void Clear() { //empty grid and queue, prepare for next room

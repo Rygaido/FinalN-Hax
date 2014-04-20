@@ -29,8 +29,6 @@ namespace Hax {
         private Boolean canDefend;
         private Boolean canJump=true;//set to true by default for now
 
-        public Map map;
-
         public Player() { //default constructor
             health = 1;
             Image = ImageBank.defaultImage;
@@ -162,17 +160,14 @@ namespace Hax {
 
         public void Reset()
         {
-            
-            //Map.scroll.X = map.PlayerSpawn.X+150;
-           // Map.scroll.Y = map.PlayerSpawn.Y-450;
             Location = new Rectangle(map.PlayerSpawn.X, map.PlayerSpawn.Y-100, Location.Width, Location.Height);
-            /*
-            Map.scroll.X = RealLocation.X;
-            Map.scroll.Y = RealLocation.Y;*/
-
+            
             Map.scroll.X = Location.X + 100;
             Map.scroll.Y = Location.Y - 200;
             health = 1;
+
+            xSpeed = 0;
+            ySpeed = 0;
         }
 
         public void TakeHit()
