@@ -29,6 +29,10 @@ namespace Hax {
         private Boolean canDefend;
         private Boolean canJump=true;//set to true by default for now
 
+        //projectile for the gun (note may wanna pass it in as apposed to having an attribute)
+        private Projectile bullet;
+
+
         public Player() { //default constructor
             health = 1;
             Image = ImageBank.defaultImage;
@@ -40,6 +44,8 @@ namespace Hax {
             //map = m;
             state = Playerstate.standing;
             previous = state;
+
+            bullet = new Projectile(2, 2, false);
         }
 
         //Method stubs for things player can do
@@ -178,6 +184,20 @@ namespace Hax {
 
         public void JumpToPoint(Point p) {
             Location = new Rectangle(p.X, p.Y, Location.Width, Location.Height);
+        }
+
+        //first power: shooting
+        public void Fire()
+        {
+            //basic plan: use a similar method as the shooting minion for this. we need to know which way he is facing so we know how to do the bullet speed
+            //also do we want one bullet at a time or machine gun and what is the gun's range
+        }
+
+        //second power: defending
+        public void Defend()
+        {
+            //basic plan: make the player take a hit or two from the direction he is facing. We also need to discuss are we implementing health or just one shot one kill without the shield?
+            //player should also not be able to move when the shield is in use, so freeze him in place. we also need to discuss if we want to put a cool down on this or let the player use it at their discretion
         }
     }
 }

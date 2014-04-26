@@ -19,6 +19,7 @@ namespace Hax {
         public Projectile(int x, int y, bool h) {
             Location = new Rectangle(x,y,70,50);
             hostile = h;
+            //we need to add an if statement that changes the pic depending on if the bullet is hostile or not
             Image = ImageBank.bullet;
         }
 
