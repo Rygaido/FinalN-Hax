@@ -40,6 +40,9 @@ namespace Hax {
         private bool pausedKeyDown = false;
         private bool pausedForGuide = false;
 
+        List<string> levels=new List<string>();
+        int currentLevel = 0;
+
         public Game1()
             : base() {
             graphics = new GraphicsDeviceManager(this);
@@ -57,12 +60,10 @@ namespace Hax {
         protected override void Initialize() {
             base.Initialize();
 
-            
             //spawn a player and a wall here for testing purposes
             pausemessagething = new GameObject();
             pausemessagething.Location = new Rectangle(170, 100, 500, 200);
             pausemessagething.Image = ImageBank.pausemessage;
-
 
             player = new Player();
 
@@ -83,9 +84,19 @@ namespace Hax {
             continueButton = new GameObject();
             continueButton.Location = new Rectangle(resetButton.Location.Right+0, 380, 80, 40);
             
+            //load list of levels
+            levels.Add("levelOne");
+            levels.Add("levelTwo");
+            levels.Add("levelThree");
+            //levels.Add("levelFour");
+            levels.Add("levelFive");
+            //levels.Add("levelSix");
+            levels.Add("levelSeven");
+            //levels 4 and 6 temporarily disabled due to unforseen faults in level design
+
             //create new map
             map = new Map(player);
-            map.Load();
+            map.Load(levels[0]);
 
             //load background, set it in place
             background = new GameObject();
@@ -124,6 +135,7 @@ namespace Hax {
             ImageBank.background = Content.Load<Texture2D>("800back");
             ImageBank.playerBullet = Content.Load<Texture2D>("bullet");
 
+            ImageBank.font = Content.Load<SpriteFont>("Font1");
         }
 
         /// <summary>
@@ -170,7 +182,8 @@ namespace Hax {
                          Reset();
                      }
                      if (mouseCurrent.X > continueButton.Location.Left && mouseCurrent.X < continueButton.Location.Right && mouseCurrent.Y > continueButton.Location.Top && mouseCurrent.Y < continueButton.Location.Bottom) {
-                         Exit();
+                         //Exit();
+                         NextLevel();
                      }
                  }
             }
@@ -234,19 +247,6 @@ namespace Hax {
                 if (map.CheckWin && current.IsKeyDown(Keys.Down))
                 {
                     win = true;
-                   // player.Reset();
-                    //enemy.Reset();
-                }
-
-            }
-            else if (win == true) {
-                if (mouseCurrent.LeftButton == ButtonState.Pressed) {
-                    if (mouseCurrent.X > resetButton.Location.Left && mouseCurrent.X < resetButton.Location.Right && mouseCurrent.Y > resetButton.Location.Top && mouseCurrent.Y < resetButton.Location.Bottom) {
-                        Reset();
-                    }
-                    if (mouseCurrent.X > continueButton.Location.Left && mouseCurrent.X < continueButton.Location.Right && mouseCurrent.Y > continueButton.Location.Top && mouseCurrent.Y < continueButton.Location.Bottom) {
-                        Exit();
-                    }
                 }
             }
 
@@ -331,6 +331,19 @@ namespace Hax {
             map.Reset();
             EndPause(true);
             win = false;
+        }
+
+        public void NextLevel() {
+            win = false;
+            paused = false;
+            currentLevel++;
+
+            if (currentLevel >= levels.Count) {
+                Exit();
+            }
+
+            map = new Map(player);
+            map.Load(levels[currentLevel]);
         }
     }
 }

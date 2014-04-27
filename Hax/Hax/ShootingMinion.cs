@@ -14,8 +14,9 @@ namespace Hax {
         private int range = 200;
         private int bulletSpeed = 4;
 
+        //constructor takes x&y spawn coords and a player
         public ShootingMinion(Player p,int spawnX, int spawnY)
-           : base(p,spawnX,spawnY-=100){
+           : base(p,spawnX,spawnY-=100){ //spawn coords offset since this minion is TALL
 
                Image = ImageBank.shootingMinion[0];
                Location = new Rectangle(spawnX, spawnY, 65, 104);
@@ -62,14 +63,20 @@ namespace Hax {
         //spawn a bullet
         public override void Shoot(){
             //can't shoot when player is to the right or if a previous bullet is active
-            if (bullet.Active==false && player.Location.X < Location.X) {
+            if (bullet.Active==false) {
                 //make new bullet at enemy's location
                 bullet = new Projectile(Location.X, Location.Y, true);
-
-                //set speed negative if player is to the left
-                bullet.xSpeed = -bulletSpeed;
                 bullet.Map = map;
                 map.Movables.Add(bullet);
+
+                //set speed negative if player is to the left
+                if(player.Location.X < Location.X){
+                    bullet.xSpeed = -bulletSpeed;
+                    faceLeft = false;
+                } else {
+                    bullet.xSpeed = bulletSpeed;
+                    faceLeft = true;
+                }
             }
         }
 

@@ -38,5 +38,7 @@ namespace Hax {
         public static Texture2D looseScreen;
         public static Texture2D wallImage;
         public static Texture2D background;
+
+        public static SpriteFont font; //a spritefont//used to draw text
     }
 }

@@ -23,7 +23,6 @@ namespace Hax {
 
         public Projectile(int x, int y, bool h) {
             hostile = h;
-<<<<<<< HEAD
             
             if (hostile == false) { //bullet owned by player
                 Image = ImageBank.playerBullet;
@@ -33,10 +32,8 @@ namespace Hax {
                 Image = ImageBank.bullet;
                 Location = new Rectangle(x, y, 70, 50);
             }
-=======
             //we need to add an if statement that changes the pic depending on if the bullet is hostile or not
             Image = ImageBank.bullet;
->>>>>>> 93e7c9c16b8a7a9856a2b6e3df1a06c81837f86c
         }
 
         //bullet update checks for conditions to remove bullet from play

@@ -35,7 +35,6 @@ namespace Hax {
         private Boolean canDefend=true;
         private Boolean canJump=true;//set to true by default for now
 
-<<<<<<< HEAD
         private Boolean hasJumped=false; //player can not jump repeatedly
         private Boolean idle = false; //set to false during all actions, if it is true set player to default state of standing
         private Boolean attacking = false; //player is shooting something currently
@@ -47,11 +46,6 @@ namespace Hax {
         private int shieldTimer = 0;
         private int shieldCooldown = 150;
         private bool shieldBroken = false;
-=======
-        //projectile for the gun (note may wanna pass it in as apposed to having an attribute)
-        private Projectile bullet;
-
->>>>>>> 93e7c9c16b8a7a9856a2b6e3df1a06c81837f86c
 
         public Player() { //default constructor
             health = 1;
@@ -253,11 +247,11 @@ namespace Hax {
         }
 
         //reset player and variables to replay level
-        public void Reset(){
+        public override void Reset(){
             Location = new Rectangle(map.PlayerSpawn.X, map.PlayerSpawn.Y-100, Location.Width, Location.Height);
-            
-            Map.scroll.X = Location.X + 100;
-            Map.scroll.Y = Location.Y - 200;
+
+            Map.scroll.X = -Location.X+400-Location.Width/2;
+            Map.scroll.Y = -Location.Y+300-Location.Height/2;
             health = 1;
             bullet = new Projectile(0, 0, false);
             bullet.Active = false;
@@ -282,20 +276,6 @@ namespace Hax {
         //helper method, move player to a point
         public void JumpToPoint(Point p) {
             Location = new Rectangle(p.X, p.Y, Location.Width, Location.Height);
-        }
-
-        //first power: shooting
-        public void Fire()
-        {
-            //basic plan: use a similar method as the shooting minion for this. we need to know which way he is facing so we know how to do the bullet speed
-            //also do we want one bullet at a time or machine gun and what is the gun's range
-        }
-
-        //second power: defending
-        public void Defend()
-        {
-            //basic plan: make the player take a hit or two from the direction he is facing. We also need to discuss are we implementing health or just one shot one kill without the shield?
-            //player should also not be able to move when the shield is in use, so freeze him in place. we also need to discuss if we want to put a cool down on this or let the player use it at their discretion
         }
     }
 }

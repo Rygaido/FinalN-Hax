@@ -141,6 +141,9 @@ namespace Hax {
             foreach (Movable m in temp) {
                 m.Draw(sb);
             }
+
+            //draw player spawn and current scroll coordinates for debug purposes
+            sb.DrawString(ImageBank.font,playerSpawn.X+" "+playerSpawn.Y+"\n"+scroll.X+" "+scroll.Y,new Vector2(0,0),Color.BlueViolet);
         }
         //Reset all enemies on map
         public void Reset() {
@@ -160,12 +163,12 @@ namespace Hax {
         }
 
         //read a file and populated the grid with objects
-        public void Load() {
+        public void Load(string level) {
             BinaryReader reader;
 
             //Get testmap data file
             try {
-                reader = new BinaryReader(File.Open("levelTwo.dat", FileMode.Open));
+                reader = new BinaryReader(File.Open(level+".dat", FileMode.Open));
             }
             catch (Exception e) {
                 throw e;
@@ -228,7 +231,6 @@ namespace Hax {
                     }
                 }
             }
-
             reader.Close();
 
             resetList = new List<Movable>(Movables);
