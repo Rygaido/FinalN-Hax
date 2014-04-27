@@ -52,13 +52,21 @@ namespace Hax {
         }
 
         public virtual void CollideWithPlayer(){
-            //if player hits enemy on top
-            if (player.Previous.Bottom < Location.Center.Y){
-                player.ySpeed = -15;//bounces player
-                current = Enemystate.dead; //kill enemy
-            }
-            else{
-                player.TakeHit();
+            if (current != Enemystate.dead) {
+                //if player hits enemy on top
+                if (player.Previous.Bottom < Location.Center.Y) {
+                    player.ySpeed = -15;//bounces player
+                    current = Enemystate.dead; //kill enemy
+                }
+                else if (player.State == Player.Playerstate.defending) {
+                    current = Enemystate.dead;
+                    //player.State = Player.Playerstate.shieldBreaking;
+
+                    player.TakeHit();
+                }
+                else {
+                    player.TakeHit();
+                }
             }
         }
     }

@@ -69,6 +69,7 @@ namespace Hax
             if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(range) && Math.Abs(player.Location.Y - Location.Y) <= Math.Abs(range)){
                 current = Enemystate.walking;
 
+                //reverse direction if player is currently on right side
                 if (player.Location.X > Location.X) {
                     runSpeed = -runSpeed;
                 }
@@ -81,6 +82,7 @@ namespace Hax
 
             //standing is default behavior
             current = Enemystate.standing;
+            if (runSpeed > 0) { runSpeed *= -1; } //reset runspeed to the negative direction
         }
 
         //override draw method

@@ -13,33 +13,44 @@ using Microsoft.Xna.Framework.GamerServices;
 namespace Hax {
     class Projectile:Movable {
 
-        Boolean hostile; //variable tracks wether bullet was fired by enemy or not, 
+        private Boolean hostile; //variable tracks wether bullet was fired by enemy or not, 
         //if true, it should damage player on collision, otherwise it should damage enemies
 
-        public Projectile(int x, int y, bool h) {
-            Location = new Rectangle(x,y,70,50);
-            hostile = h;
-            Image = ImageBank.bullet;
+        public Boolean Hostile {
+            get { return hostile; }
+            set { hostile = value; }
         }
 
+        public Projectile(int x, int y, bool h) {
+            hostile = h;
+            
+            if (hostile == false) { //bullet owned by player
+                Image = ImageBank.playerBullet;
+                Location = new Rectangle(x + 30, y + 40, 10, 10);
+            }
+            else { //bullet owned by enemy
+                Image = ImageBank.bullet;
+                Location = new Rectangle(x, y, 70, 50);
+            }
+        }
+
+        //bullet update checks for conditions to remove bullet from play
         public override void Update() {
             base.Update();
 
-            if (xSpeed == 0) {
+            if (xSpeed == 0) { //projectile is destroyed if not moving
                 active = false;
             }
 
-            if (RealLocation.X <= -Location.Width) {
+            if (RealLocation.X <= -Location.Width) { //remove bullet if it passes offscreen to the left
                 Active = false;
             }
-
-            /*/player intersects with bullet location
-            if (Location.Intersects(player.Location)) {
-                CollideWithPlayer();
-            }*/
+            if (RealLocation.X >= 800) { //or to the right
+                Active = false;
+            }
         }
 
-        public void CheckCollisionB(Unit u) {
+        public void CheckCollisionB(Unit u) { //collision with a unit
             if (Location.Intersects(u.Location)) {
                 u.TakeDamage(1);
                 this.Active = false;

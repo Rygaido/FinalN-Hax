@@ -18,11 +18,13 @@ namespace Hax {
         private Texture2D image; //the image drawn over object's rectangle
         private Vector2 offset; //a modifier for location based on the scrolling grid
 
+        //timer used for animation, speed at which animation frames change, and current frame visable
         protected int animationTimer = 0;
         protected int animationSpeed = 25;
         protected int animationFrame = 0;
+        protected bool animationEnd = false;
 
-        protected Color col=Color.White; //control color of draw method for debug purposes
+        protected Color col=Color.White; //protected variable controls color of draw method for debug purposes
 
         //is object facing left? should image be mirrored
         protected bool faceLeft;
@@ -67,25 +69,30 @@ namespace Hax {
             //method stub
         }
 
-        protected void Animate(List<Texture2D> s)
+        protected void Animate(List<Texture2D> s) //animates the object using a list of images for frames
         {
-            Texture2D[] sprites = s.ToArray();
+            animationEnd = false; //bool used to track if animation has just ended or not
 
-            if (animationTimer > animationSpeed)
+            if (animationTimer > animationSpeed) //when timer reaches speed
             {
-                animationFrame++;
-                if (animationFrame >= sprites.Length)
+                animationFrame++; //increment frame
+                if (animationFrame >= s.Count)//then if frames have exceeded sprites in list
                 {
-                    animationFrame = 0;
+                    animationFrame = 0; //reset frame
+                    animationEnd = true; //Animation cycle has ended
                 }
-
-                Image = sprites[animationFrame];
-                
+                //update image to new frame
+                Image = s[animationFrame];
+                //reset timer
                 animationTimer = 0;
-                
             }
-
+            //until then, increment timer
             animationTimer++;
+        }
+        //helper method//resets animation cycle
+        protected void ResetAnimation() {
+            animationFrame = 0;
+            animationTimer = animationSpeed;
         }
     }
 }

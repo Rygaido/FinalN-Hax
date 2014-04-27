@@ -19,6 +19,7 @@ using System.IO;
 //makes up the entire level except for the player
 namespace Hax {
     class Map {
+       // public GameObject background;
         private GameObject[,] grid; //contains all game objects
         private int row;
         private int col;
@@ -49,12 +50,10 @@ namespace Hax {
             set { playerSpawn = value; }
         }
 
-        public Map(Player player) {
-            //playerSpawn = new Point(0, 0);
+        public Map(Player player){
             p = player;
             p.Map = this;
             movables = new List<Movable>();
-
         }
 
         //has update and draw methods similar to game object
@@ -63,20 +62,22 @@ namespace Hax {
 
             temp = new List<Movable>(movables);
 
-            ///*
-            if (p.Location.Y > row*100) {
+            //reset if player falls off of map
+            if (p.Location.Y > row*50+600) {
                 Reset();
             }//*/
 
             checkWin = p.Location.Intersects(goal.Location);
 
-            //method stub
+            //loop through all objects in grid
             for (int i = 0; i < grid.GetLongLength(0); i++){
                 for (int j = 0; j < grid.GetLongLength(1); j++) {
-                    if (grid[i, j] != null) {
+                    if (grid[i, j] != null) { //do nothing for null objects, empty space, a lot of that
+
+                        //update object
                         grid[i, j].Update();
 
-                        try {
+                        try { //if the object is a wall, check collision with player and all movables
                             Wall w = (Wall)grid[i, j];
                             w.checkPlayer(p);
 
@@ -84,22 +85,41 @@ namespace Hax {
                                 w.checkObject(m);
                             }
                         }
-                        catch (Exception e) {}
-                        
-
+                        catch (Exception e) {} //try catch is needed to typecast a GameObject into a Wall sub-object
+                        //and exception being thrown simply means gameobject was not a wall and can be ignored for now
                     }
                 }
-            }//*/
-            foreach (Movable m in temp) {
+            }
+            foreach (Movable m in temp) { //loop through all movables
                 if (m.Active == true) { //only update active movables
                     m.Update();
+
+                    try {//check if object is a bullet
+                        Projectile b = (Projectile)m;
+
+                        if (b.Hostile == false) {//check if object is player's bullet
+                            //if so, check object against all enemies in Movables
+                            foreach (Movable n in temp) {
+                                try {//check if object is an enemy
+                                    Enemy e = (Enemy)n;
+
+                                    //bullet collides with enemy
+                                    if (b.Location.Intersects(e.Location)) {
+                                        e.Active = false;
+                                        b.Active = false;
+                                    }
+                                }
+                                catch (Exception e) { } //object was not an enemy
+                            }
+                        }
+                    }
+                    catch (Exception e) {} //object was not a projectile
                 }
                 else {//remove inactive movables
-                    
                     movables.Remove(m);
                 }
             }
-
+          //  background.Update();
             //use the overload of update: Update(scroll);
             //that way all objects will move with grid instead of screen
         }
@@ -110,6 +130,7 @@ namespace Hax {
 
             temp = new List<Movable>(movables);
 
+         //   background.Draw(sb);
             for (int i = 0; i < grid.GetLongLength(0); i++) {
                 for (int j = 0; j < grid.GetLongLength(1); j++) {
                     if (grid[i, j] != null) {
@@ -129,16 +150,6 @@ namespace Hax {
             temp = new List<Movable>(movables);
 
             foreach (Movable m in temp) {
-                /*try {
-                    Enemy e = (Enemy)m;
-                    e.Reset();
-                }
-                catch (Exception e) { }
-                try {
-                    Projectile bull= (Projectile)m;
-                    bull.Reset();
-                }
-                catch (Exception e) { }*/
                 m.Reset();
             }
         }
@@ -154,7 +165,7 @@ namespace Hax {
 
             //Get testmap data file
             try {
-                reader = new BinaryReader(File.Open("TestMap.dat", FileMode.Open));
+                reader = new BinaryReader(File.Open("levelTwo.dat", FileMode.Open));
             }
             catch (Exception e) {
                 throw e;

@@ -19,27 +19,26 @@ namespace Hax {
 
         Map map; //map contains a grid of game objects read from a file
         Player player; //THE player object
-        
+        GameObject background;
+
+        //temporary screens for certain situations
         GameObject pausemessagething;
         GameObject winscreenpopup;
         GameObject loosescreenpopup;
 
+        //buttons for win and lose screens
         GameObject resetButton;
         GameObject continueButton;
 
         bool win = false;
         
-        int animationTimer = 0;
-        
-
         KeyboardState previous; //previous state of keyboard
-        MouseState mousePrevious;
+        MouseState mousePrevious; //previous state of the mouse
 
+        //bools controlling pause screen
         private bool paused;
         private bool pausedKeyDown = false;
         private bool pausedForGuide = false;
-
-
 
         public Game1()
             : base() {
@@ -66,31 +65,32 @@ namespace Hax {
 
 
             player = new Player();
+
+            //set up winscreen
             winscreenpopup = new GameObject();
             winscreenpopup.Location = new Rectangle(170,100,500,400);
             winscreenpopup.Image = ImageBank.winscreen;
 
+            //set up lose screen
             loosescreenpopup = new GameObject();
             loosescreenpopup.Location = new Rectangle(170, 100, 500, 400);
             loosescreenpopup.Image = ImageBank.looseScreen;
             
-
+            //set up reset and continue buttons
             resetButton = new GameObject();
-            //204,200 / 505,282
-            //int xx=winscreenpopup.Location.X + (int)((204.0 / 505) * winscreenpopup.Location.Width);
-            //int yy=winscreenpopup.Location.Y + (int)((200.0 / 282) * winscreenpopup.Location.Height);
-            //resetButton.Location = new Rectangle(xx, yy, (int)((271.0 / 505) * winscreenpopup.Location.Width)-xx, (int)((220.0 / 282) * winscreenpopup.Location.Height)-yy);
             resetButton.Location = new Rectangle(370,380,80,35);
 
             continueButton = new GameObject();
             continueButton.Location = new Rectangle(resetButton.Location.Right+0, 380, 80, 40);
-            //284,199 / 505,282
-            //xx = winscreenpopup.Location.X + (int)((284.0 / 505) * winscreenpopup.Location.Width);
-           // yy = winscreenpopup.Location.Y + (int)((199.0 / 282) * winscreenpopup.Location.Height);
-            //continueButton.Location = new Rectangle(xx, yy, (int)((365.0 / 505) * winscreenpopup.Location.Width) - xx, (int)((220.0 / 282) * winscreenpopup.Location.Height) - yy);
-
+            
+            //create new map
             map = new Map(player);
             map.Load();
+
+            //load background, set it in place
+            background = new GameObject();
+            background.Location = new Rectangle(0, 0, 800, 600);
+            background.Image = ImageBank.background;
         }
 
         /// <summary>
@@ -105,12 +105,14 @@ namespace Hax {
             ImageBank.defaultImage=Content.Load<Texture2D>("enemy1");
             ImageBank.wallImage  = Content.Load<Texture2D>("platform");
 
-            //mario sprites are just placeholders //remember to replace them before releasing game
+            //load sprites into imagebank here
             ImageBank.playerStand.Add(Content.Load<Texture2D>("idle1"));
             ImageBank.playerStand.Add(Content.Load<Texture2D>("idle2"));
             ImageBank.playerWalk.Add(Content.Load<Texture2D>("run1"));
             ImageBank.playerWalk.Add(Content.Load<Texture2D>("run2"));
             ImageBank.playerJump.Add(Content.Load<Texture2D>("jump"));
+            ImageBank.playerAttack.Add(Content.Load<Texture2D>("shootingaction"));
+            ImageBank.playerDefend.Add(Content.Load<Texture2D>("shieldaction"));
             ImageBank.winscreen = Content.Load<Texture2D>("win");
             ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1"));
             ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1_flip")); 
@@ -119,6 +121,9 @@ namespace Hax {
             ImageBank.pausemessage = Content.Load<Texture2D>("wordart");
             ImageBank.looseScreen = Content.Load<Texture2D>("gameoverscreen");
             ImageBank.bullet = Content.Load<Texture2D>("New Canvas");
+            ImageBank.background = Content.Load<Texture2D>("800back");
+            ImageBank.playerBullet = Content.Load<Texture2D>("bullet");
+
         }
 
         /// <summary>
@@ -142,22 +147,24 @@ namespace Hax {
             KeyboardState current = Keyboard.GetState();
             MouseState mouseCurrent = Mouse.GetState();
 
-            if (current.IsKeyDown(Keys.P))
+            if (current.IsKeyDown(Keys.P)) //pause key P
             {
                 BeginPaused(true);
 
             }
-            if (current.IsKeyDown(Keys.Enter))
+            if (current.IsKeyDown(Keys.Enter)) //unpause key enter
             {
                 EndPause(true);
                 
             }
-            if (win)
+            if (win) //show win screen
             {
                 WinScreen(true);
                 paused = true;
+                //place buttons on win screen
                 resetButton.Location = new Rectangle(370, 380, 80, 35);
                  continueButton.Location = new Rectangle(resetButton.Location.Right + 0, 380, 80, 40);
+                //check if buttons are clicked
                  if (mouseCurrent.LeftButton == ButtonState.Pressed) {
                      if (mouseCurrent.X > resetButton.Location.Left && mouseCurrent.X < resetButton.Location.Right && mouseCurrent.Y > resetButton.Location.Top && mouseCurrent.Y < resetButton.Location.Bottom) {
                          Reset();
@@ -167,11 +174,13 @@ namespace Hax {
                      }
                  }
             }
-            if (player.IsDead()) {
+            if (player.IsDead()) { //show gameover screen
                 paused = true;
 
+                //place buttons on gameover screen
                 continueButton.Location = new Rectangle(360, 374, 80, 35);
                 resetButton.Location = new Rectangle(continueButton.Location.Right, 374, 80, 30);
+                //check if buttons are pressed
                 if (mouseCurrent.LeftButton == ButtonState.Pressed) {
                     if (mouseCurrent.X > resetButton.Location.Left && mouseCurrent.X < resetButton.Location.Right && mouseCurrent.Y > resetButton.Location.Top && mouseCurrent.Y < resetButton.Location.Bottom) {
                         Reset();
@@ -208,8 +217,14 @@ namespace Hax {
                     player.ReleaseUpKey();
                 }
                 if (current.IsKeyDown(Keys.Down))
-                {// && !previous.IsKeyDown(Keys.Down)) {
+                {
                     player.DownKey();
+                }
+                if (current.IsKeyDown(Keys.S)) {
+                    player.SKey();
+                }
+                if (current.IsKeyDown(Keys.D)) {
+                    player.DKey();
                 }
 
                 player.Update();
@@ -223,7 +238,6 @@ namespace Hax {
                     //enemy.Reset();
                 }
 
-                animationTimer++;
             }
             else if (win == true) {
                 if (mouseCurrent.LeftButton == ButtonState.Pressed) {
@@ -254,6 +268,7 @@ namespace Hax {
            
             spriteBatch.Begin();
 
+            background.Draw(spriteBatch);
             map.Draw(spriteBatch);
          /*   enemy.Draw(spriteBatch);
             wally.Draw(spriteBatch);
@@ -285,16 +300,13 @@ namespace Hax {
 
             base.Draw(gameTime);
         }
-
+        //method to begin pauseing
         private void BeginPaused(bool UserInitiated)
         {
-            
             paused = true;
             pausedForGuide = !UserInitiated;
-          
-
         }
-
+        //method to end pausing
         private void EndPause(bool letsplay)
         {
             if (letsplay == true)
@@ -304,7 +316,7 @@ namespace Hax {
             }
             
         }
-
+        //helper method for win screen
         private void WinScreen(bool winthing)
         {
              if (winthing == true)
@@ -313,11 +325,7 @@ namespace Hax {
              }
         }
 
-        private void DeathScreen(bool death)
-        { 
-            
-        }
-
+        //resets player and map, un-ends the game and allows level to be replayed
         private void Reset() {
             //player.Reset();
             map.Reset();

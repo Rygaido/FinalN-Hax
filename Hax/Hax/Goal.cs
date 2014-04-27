@@ -22,14 +22,5 @@ namespace Hax {
             Image = ImageBank.goal;
             Location = new Rectangle(750, 324, Image.Width, Image.Height);
         }
-
-
-    }
-
-
-
-    //the place where player starts
-    class Spawn : GameObject {
-        //propably doesn't need to do anything, well just move player's X and Y to match after loading a map
     }
 }

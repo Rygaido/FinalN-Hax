@@ -15,19 +15,37 @@ namespace Hax {
 
         //playerstate tracks the action player is currently performing 
         //facingLeft is tracked seperately
-        enum Playerstate { standing, walking, jumping, attacking, defending };
+        public enum Playerstate { standing, walking, jumping, defending, shieldBreaking };
 
         private Playerstate state;
         private Playerstate previous;
+
+        //getter/setter for current state
+        public Playerstate State {
+            get { return state; }
+            set { state = value; }
+        }
 
         private int jumpSpeed = 20; //vertical speed at instant of jump
         private int runSpeed = 5; //max running speed
         private int acceleration = 1;
 
         //boolean variables for whether certain skills are usable at the time
-        private Boolean canAttack;
-        private Boolean canDefend;
+        private Boolean canAttack=true;
+        private Boolean canDefend=true;
         private Boolean canJump=true;//set to true by default for now
+
+        private Boolean hasJumped=false; //player can not jump repeatedly
+        private Boolean idle = false; //set to false during all actions, if it is true set player to default state of standing
+        private Boolean attacking = false; //player is shooting something currently
+
+        private Projectile bullet; //the bullet object player is shooting
+        private int bulletSpeed = 10; //speed of player's bullet
+
+        //when shield is broken, set to true, then run shieldTimer for Cooldown frames to restore shield
+        private int shieldTimer = 0;
+        private int shieldCooldown = 150;
+        private bool shieldBroken = false;
 
         public Player() { //default constructor
             health = 1;
@@ -36,37 +54,46 @@ namespace Hax {
             Location = new Rectangle(50, 250, 57, 87);
             //Location.Width = Image.Width;
             //Location.Height = Image.Height;
-
+            bullet = new Projectile(0,0,false);
+            bullet.Active = false;
             //map = m;
             state = Playerstate.standing;
             previous = state;
         }
 
         //Method stubs for things player can do
-        //these methods are marked private, public methods below should be called from game
+        //these methods are marked private, public key-pressed methods below should be called from game
+
+        //player shoots a bullet
         private void Attack() {
             if (canAttack) {
-                state = Playerstate.attacking;
-                 //method stub
+                attacking = true;
+                //idle = false;
+                Shoot();
             }
         }
-        private void Defend() {
-            if (canDefend) {
+        private void Defend() { //player produces a shield, which can block one attack
+            if (canDefend && !shieldBroken) {
+                idle = false;
                 state = Playerstate.defending;
-                //method stub
+
             }
         }
-        private void Jump() {
-            if (canJump && state != Playerstate.jumping) {
+        private void Jump() { //player leaps into the air
+            if (!hasJumped && state != Playerstate.defending) { //cant jump while defending, or while has previously jumped
+           // if(previous == Playerstate.standing){
+                hasJumped = true;
+                idle = false;
                 state = Playerstate.jumping;
 
-                ySpeed = -jumpSpeed;
+                ySpeed = -jumpSpeed; //jumpspeed is actually negative because Y axis is wierd
             }
         }
         //method controls walking, does not have a bool value as I assume it can't be disabled
         private void Walk(bool facingLeft){
             if (!collidingWithWall)
             {
+                idle = false;
                 if (state != Playerstate.jumping)
                 { //unless player is airborn, set state to walking
                     state = Playerstate.walking;
@@ -82,6 +109,24 @@ namespace Hax {
                 }
             }
         }
+        //spawn a bullet
+        public void Shoot() {
+            //can't shoot when player is to the right
+           // this.col = Color.Red;
+            if (bullet.Active == false) {
+                //make new bullet at player's location
+                bullet = new Projectile(Location.X, Location.Y, false);
+
+                //set speed negative if player is facing the left
+                bullet.xSpeed = bulletSpeed;
+                if (faceLeft) {
+                    bullet.xSpeed *= -1;
+                }
+                //add bullet to map.Movables and add map to bullet
+                bullet.Map = map;
+                map.Movables.Add(bullet);
+            }
+        }
 
         //public methods corressponding to button presses
         public void LeftKey() { //left and right keys are intended to be held
@@ -90,18 +135,25 @@ namespace Hax {
         public void RightKey() {
             Walk(false);
         }
-        public void UpKey() {
+        public void UpKey() { //up key jumps
             Jump();
         }
-        public void ReleaseUpKey()
+        public void ReleaseUpKey() //releasing up key stops upward motion
         {
             if (!(ySpeed > 0))
             {
                 ySpeed = 0;
             }
         }
-        public void DownKey() {
+        public void DownKey() { //down key
 
+
+        }
+        public void SKey() { //s key shoots
+            Attack();
+        }
+        public void DKey() { //d key defends
+            Defend();
         }
         public void NoKey() { //no key is being pressed
             
@@ -109,9 +161,11 @@ namespace Hax {
 
         //overload of update method
         public override void Update() {
+            if (previous != state) {
+               // ResetAnimation();
+            }
 
-            
-            if (state == Playerstate.standing) { //if player is standing still, deccelarate
+            if (state == Playerstate.standing|| state == Playerstate.defending) { //if player is standing still, deccelarate
                 if (xSpeed > 0) { xSpeed-=acceleration; }
                 else if (xSpeed < 0) { xSpeed += acceleration; } 
                 else { xSpeed = 0; } //Bugfix: if caught in small space between acc and -acc, set speed to 0 to avoid sliding
@@ -125,14 +179,35 @@ namespace Hax {
                 Animate(ImageBank.playerJump);
             } else if (state == Playerstate.walking) {
                 animationSpeed = 7;
-                Animate(ImageBank.playerWalk);
+                if (!attacking) {
+                    Animate(ImageBank.playerWalk);
+                }
+                else {
+                    Animate(ImageBank.playerAttack);
+                }
             } else if (state == Playerstate.standing) {
                 animationSpeed = 25;
-                Animate(ImageBank.playerStand);
+                if (!attacking) {
+                    Animate(ImageBank.playerStand);
+                }
+                else {
+                    Animate(ImageBank.playerAttack);
+                }
             }
+            /*else if (attacking) {
+                animationSpeed = 1;
+                Animate(ImageBank.playerAttack);
+            }*/
+            else if (state == Playerstate.defending) {
+                animationSpeed = 1;
+                Animate(ImageBank.playerDefend);
+            }///*
+            if (animationEnd) {
+                attacking = false;
+            }//*/
 
             //after updating image, reset state (unless it's jumping state, which must be changed externally)
-            if (state != Playerstate.jumping) { 
+            if (state != Playerstate.jumping && idle) { 
                 state = Playerstate.standing;
             }
 
@@ -140,42 +215,63 @@ namespace Hax {
             {
                 animationTimer = 25;
             }
+
+            //increment timer when shield is broken
+            if (shieldTimer < shieldCooldown && shieldBroken) {
+                shieldTimer++;
+            }
+            else if (shieldTimer == shieldCooldown) { //when timer passes cooldown, repair shield
+                shieldBroken = false;
+            }
+
             previous = state;
 
             base.Update();
-
 
             //apply gravity
             ySpeed += Movable.gravity;
             //ySpeed = 1;
 
+            idle = true;
         }
 
+        //player touches ground and can jump again
         public override void Landing() {
             base.Landing();
             if (state == Playerstate.jumping) {
                 state = Playerstate.standing;
             }
+            hasJumped = false;
         }
 
-        public void Reset()
-        {
+        //reset player and variables to replay level
+        public void Reset(){
             Location = new Rectangle(map.PlayerSpawn.X, map.PlayerSpawn.Y-100, Location.Width, Location.Height);
             
             Map.scroll.X = Location.X + 100;
             Map.scroll.Y = Location.Y - 200;
             health = 1;
+            bullet = new Projectile(0, 0, false);
+            bullet.Active = false;
 
             xSpeed = 0;
             ySpeed = 0;
         }
 
-        public void TakeHit()
-        {
-            base.TakeDamage(1);
+        //player has collided with enemy or bullet
+        public void TakeHit(){
+            if (state != Playerstate.defending) {
+                base.TakeDamage(1);
+            }
+            else { //if player is defending, he will not take damage
+                state = Playerstate.shieldBreaking;
+                shieldBroken = true;
+                shieldTimer = 0;
+            }
             //Reset();
         }
 
+        //helper method, move player to a point
         public void JumpToPoint(Point p) {
             Location = new Rectangle(p.X, p.Y, Location.Width, Location.Height);
         }

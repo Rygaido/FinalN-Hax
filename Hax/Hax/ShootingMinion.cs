@@ -27,33 +27,31 @@ namespace Hax {
         public override void Update() {
             base.Update();
 
-            if (Enemystate.dead != current) {
+            if (Enemystate.dead != current) { //do nothing when dead //not a zombie
                 CheckInRange();
 
                 //player intersects with enemy location
                 if (Location.Intersects(player.Location)) {
                     CollideWithPlayer();
                 }
+                //this enemy's bullet collides with player
                 if (bullet.Location.Intersects(player.Location)) {
                     player.TakeHit();
                     bullet.Active = false;
                 }
-
+                //call shoot method if conditions to shoot are met
                 if (current == Enemystate.shooting) {
                     Shoot();
-                    
                 }
-
-
             }
             else {
                 Active = false;
             }
         }
 
-        //player gets within range on X and Y coordinates, set state to walk
+        //player gets within range on X and Y coordinates, set state to shooting//otherwise revert to standing
         public void CheckInRange() {
-            if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(range)) {
+            if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(range) && Math.Abs(player.Location.Y - Location.Y)/2 <= Math.Abs(range)) {
                 current = Enemystate.shooting;
             }
             else {
@@ -63,9 +61,9 @@ namespace Hax {
 
         //spawn a bullet
         public override void Shoot(){
-            //can't shoot when player is to the right
+            //can't shoot when player is to the right or if a previous bullet is active
             if (bullet.Active==false && player.Location.X < Location.X) {
-                //make new bullet at enemie's location
+                //make new bullet at enemy's location
                 bullet = new Projectile(Location.X, Location.Y, true);
 
                 //set speed negative if player is to the left
