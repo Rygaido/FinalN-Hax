@@ -143,7 +143,7 @@ namespace Hax {
             }
 
             //draw player spawn and current scroll coordinates for debug purposes
-            sb.DrawString(ImageBank.font,playerSpawn.X+" "+playerSpawn.Y+"\n"+scroll.X+" "+scroll.Y,new Vector2(0,0),Color.BlueViolet);
+           // sb.DrawString(ImageBank.font,playerSpawn.X+" "+playerSpawn.Y+"\n"+scroll.X+" "+scroll.Y,new Vector2(0,0),Color.BlueViolet);
         }
         //Reset all enemies on map
         public void Reset() {
