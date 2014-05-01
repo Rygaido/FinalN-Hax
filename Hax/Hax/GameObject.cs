@@ -25,7 +25,9 @@ namespace Hax {
         protected bool animationEnd = false;
 
         protected Color col=Color.White; //protected variable controls color of draw method for debug purposes
-
+        public Color Col { //mutator property
+            set { col = value; }
+        }
         //is object facing left? should image be mirrored
         protected bool faceLeft;
 

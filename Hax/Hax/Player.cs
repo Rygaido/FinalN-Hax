@@ -15,10 +15,13 @@ namespace Hax {
 
         //playerstate tracks the action player is currently performing 
         //facingLeft is tracked seperately
-        public enum Playerstate { standing, walking, jumping, defending, shieldBreaking };
+        public enum Playerstate { standing, walking, jumping, attacking, defending, shieldBreaking };
+        public enum Cheatstate { normal, attack, defend };
 
         private Playerstate state;
         private Playerstate previous;
+
+        private Cheatstate cheat;
 
         //getter/setter for current state
         public Playerstate State {
@@ -47,6 +50,8 @@ namespace Hax {
         private int shieldCooldown = 150;
         private bool shieldBroken = false;
 
+        int countDown = -1;
+
         public Player() { //default constructor
             health = 1;
             Image = ImageBank.defaultImage;
@@ -69,7 +74,8 @@ namespace Hax {
         //player shoots a bullet
         private void Attack() {
             if (canAttack) {
-                attacking = true;
+                state = Playerstate.attacking;
+                idle = false;
                 //idle = false;
                 Shoot();
             }
@@ -157,6 +163,14 @@ namespace Hax {
         public void DKey() { //d key defends
             Defend();
         }
+        public void FKey() { //F key does it all
+            if (cheat == Cheatstate.attack) {
+                Attack();
+            }
+            if (cheat == Cheatstate.defend) {
+                Defend();
+            }
+        }
         public void NoKey() { //no key is being pressed
             
         }
@@ -167,7 +181,7 @@ namespace Hax {
                // ResetAnimation();
             }
 
-            if (state == Playerstate.standing|| state == Playerstate.defending) { //if player is standing still, deccelarate
+            if (state == Playerstate.standing || state == Playerstate.defending || state == Playerstate.attacking) { //if player is standing still, deccelarate
                 if (xSpeed > 0) { xSpeed-=acceleration; }
                 else if (xSpeed < 0) { xSpeed += acceleration; } 
                 else { xSpeed = 0; } //Bugfix: if caught in small space between acc and -acc, set speed to 0 to avoid sliding
@@ -181,19 +195,25 @@ namespace Hax {
                 Animate(ImageBank.playerJump);
             } else if (state == Playerstate.walking) {
                 animationSpeed = 7;
-                if (!attacking) {
-                    Animate(ImageBank.playerWalk);
+                if (cheat == Cheatstate.attack) {
+                    Animate(ImageBank.playerWalkShoot);
+                }
+                else if (cheat == Cheatstate.defend) {
+                    Animate(ImageBank.playerWalkDefend);
                 }
                 else {
-                    Animate(ImageBank.playerAttack);
+                    Animate(ImageBank.playerWalk);
                 }
             } else if (state == Playerstate.standing) {
                 animationSpeed = 25;
-                if (!attacking) {
-                    Animate(ImageBank.playerStand);
+                if (cheat == Cheatstate.attack) {
+                    Animate(ImageBank.playerStandShoot);
+                }
+                else if (cheat == Cheatstate.defend) {
+                    Animate(ImageBank.playerStandDefend);
                 }
                 else {
-                    Animate(ImageBank.playerAttack);
+                    Animate(ImageBank.playerStand);
                 }
             }
             /*else if (attacking) {
@@ -204,6 +224,10 @@ namespace Hax {
                 animationSpeed = 1;
                 Animate(ImageBank.playerDefend);
             }///*
+            else if (state == Playerstate.attacking) {
+                animationSpeed = 1;
+                Animate(ImageBank.playerAttack);
+            }
             if (animationEnd) {
                 attacking = false;
             }//*/
@@ -235,6 +259,12 @@ namespace Hax {
             //ySpeed = 1;
 
             idle = true;
+
+            if (countDown >= 0) {
+                countDown--;
+            } if (countDown == 0) {
+                col = Color.White;
+            }
         }
 
         //player touches ground and can jump again
@@ -276,6 +306,21 @@ namespace Hax {
         //helper method, move player to a point
         public void JumpToPoint(Point p) {
             Location = new Rectangle(p.X, p.Y, Location.Width, Location.Height);
+        }
+
+        public void ActivateDefense() {
+            cheat = Cheatstate.defend;
+        }
+        public void ActivateAttack() {
+            cheat = Cheatstate.attack;
+        }
+        public void DeActivateCheats() {
+            cheat = Cheatstate.normal;
+        }
+
+        public void FailedCheat() {
+            col = Color.Red;
+            countDown = 50;
         }
     }
 }

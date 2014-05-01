@@ -17,7 +17,11 @@ namespace Hax {
 
         //list of frames in all of player's animations
         public static List<Texture2D> playerStand = new List<Texture2D>();
+        public static List<Texture2D> playerStandShoot = new List<Texture2D>();
+        public static List<Texture2D> playerStandDefend = new List<Texture2D>();
         public static List<Texture2D> playerWalk = new List<Texture2D>();
+        public static List<Texture2D> playerWalkShoot = new List<Texture2D>();
+        public static List<Texture2D> playerWalkDefend = new List<Texture2D>();
         public static List<Texture2D> playerJump = new List<Texture2D>();
         public static List<Texture2D> playerAttack = new List<Texture2D>();
         public static List<Texture2D> playerDefend = new List<Texture2D>();
@@ -40,5 +44,7 @@ namespace Hax {
         public static Texture2D background;
 
         public static SpriteFont font; //a spritefont//used to draw text
+
+        public static Texture2D square; //a white square
     }
 }

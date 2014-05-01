@@ -8,17 +8,35 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
 #endregion
-
+using System.Threading;
 
 //takes player input string
 namespace Hax {
     class InputWindow:GameObject {
-        string input;
+        private string input="";
+
+        private Player player;
+
+        public InputWindow(Player p) {
+            player = p;
+            Image = ImageBank.square;
+            col = Color.Black;
+
+            Location = new Rectangle(50, 200, 700, 50);
+        }
+
+        public override void Draw(SpriteBatch sb) {
+
+            sb.Draw(Image, new Rectangle(Location.X - 5, Location.Y - 5, Location.Width + 10, Location.Height + 10), Color.Red);
+            base.Draw(sb);
+
+            sb.DrawString(ImageBank.font,input,new Vector2(Location.X, Location.Y),Color.White);
+        }
 
         //read chars from keyboard into a string
         public void ReadKeyboard(KeyboardState current, KeyboardState previous) {
             bool shift = false;//check if shift key is down
-            if (current.IsKeyDown(Keys.LeftShift)) {
+            if (current.IsKeyDown(Keys.LeftShift) || current.IsKeyDown(Keys.RightShift)) {
                 shift = true;
             }
 
@@ -51,6 +69,30 @@ namespace Hax {
                     }
                 }
             }
+        }
+
+        public void ProcessCheat() {
+            if (input == "FistfulOfPixels") {
+                player.ActivateAttack();
+                //player.Col = Color.Red;
+            }
+            else if (input == "RIPColeson") {
+                player.ActivateDefense();
+                //player.Col = Color.Green;
+            }
+            else if (input == "SixTwoThree") {
+                player.DeActivateCheats();
+                player.Col = Color.White;
+                //player.Col = Color.Yellow;
+            }
+            else if (input == "ANewStart") {
+                player.Col = Color.Blue;
+            }
+            else {
+                player.FailedCheat();
+            }
+
+            input = "";
         }
     }
 }

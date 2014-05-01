@@ -40,6 +40,9 @@ namespace Hax {
         private bool pausedKeyDown = false;
         private bool pausedForGuide = false;
 
+        private bool textMode = false;
+        InputWindow textBox;
+
         List<string> levels=new List<string>();
         int currentLevel = 0;
 
@@ -66,6 +69,8 @@ namespace Hax {
             pausemessagething.Image = ImageBank.pausemessage;
 
             player = new Player();
+
+            textBox = new InputWindow(player);
 
             //set up winscreen
             winscreenpopup = new GameObject();
@@ -119,8 +124,16 @@ namespace Hax {
             //load sprites into imagebank here
             ImageBank.playerStand.Add(Content.Load<Texture2D>("idle1"));
             ImageBank.playerStand.Add(Content.Load<Texture2D>("idle2"));
+            ImageBank.playerStandShoot.Add(Content.Load<Texture2D>("idle1shoot"));
+            ImageBank.playerStandShoot.Add(Content.Load<Texture2D>("idle2shoot"));
+            ImageBank.playerStandDefend.Add(Content.Load<Texture2D>("idle1shield"));
+            ImageBank.playerStandDefend.Add(Content.Load<Texture2D>("idle2shield"));
             ImageBank.playerWalk.Add(Content.Load<Texture2D>("run1"));
             ImageBank.playerWalk.Add(Content.Load<Texture2D>("run2"));
+            ImageBank.playerWalkShoot.Add(Content.Load<Texture2D>("run1shoot"));
+            ImageBank.playerWalkShoot.Add(Content.Load<Texture2D>("run2shoot"));
+            ImageBank.playerWalkDefend.Add(Content.Load<Texture2D>("run1shield"));
+            ImageBank.playerWalkDefend.Add(Content.Load<Texture2D>("run2shield"));
             ImageBank.playerJump.Add(Content.Load<Texture2D>("jump"));
             ImageBank.playerAttack.Add(Content.Load<Texture2D>("shootingaction"));
             ImageBank.playerDefend.Add(Content.Load<Texture2D>("shieldaction"));
@@ -136,6 +149,7 @@ namespace Hax {
             ImageBank.playerBullet = Content.Load<Texture2D>("bullet");
 
             ImageBank.font = Content.Load<SpriteFont>("Font1");
+            ImageBank.square = Content.Load<Texture2D>("WhiteSquare");
         }
 
         /// <summary>
@@ -167,7 +181,15 @@ namespace Hax {
             if (current.IsKeyDown(Keys.Enter)) //unpause key enter
             {
                 EndPause(true);
-                
+
+                if (textMode) { //if text mode was true, set it to false and process cheats
+                    textMode = false;
+                    textBox.ProcessCheat();
+                }
+            }
+            if (current.IsKeyDown(Keys.LeftShift)) {
+                textMode = true;
+                BeginPaused(true);
             }
             if (win) //show win screen
             {
@@ -209,28 +231,22 @@ namespace Hax {
             //checkPauseGuide();
 
             // TODO: Add your update logic here
-            if (paused == false) 
-            {
+            if (paused == false) {
 
                 //check if a key is currently pressed, but wasn't before, call appropriate method on player
-                if (current.IsKeyDown(Keys.Left))
-                {// && !previous.IsKeyDown(Keys.Left)) {
+                if (current.IsKeyDown(Keys.Left)) {// && !previous.IsKeyDown(Keys.Left)) {
                     player.LeftKey(); //left key can be held
                 }
-                if (current.IsKeyDown(Keys.Right))
-                {// && !previous.IsKeyDown(Keys.Right)) {
+                if (current.IsKeyDown(Keys.Right)) {// && !previous.IsKeyDown(Keys.Right)) {
                     player.RightKey(); //right key can be held
                 }
-                if (current.IsKeyDown(Keys.Up) && !previous.IsKeyDown(Keys.Up))
-                {
+                if (current.IsKeyDown(Keys.Up) && !previous.IsKeyDown(Keys.Up)) {
                     player.UpKey();
                 }
-                if (!current.IsKeyDown(Keys.Up) && previous.IsKeyDown(Keys.Up))
-                {
+                if (!current.IsKeyDown(Keys.Up) && previous.IsKeyDown(Keys.Up)) {
                     player.ReleaseUpKey();
                 }
-                if (current.IsKeyDown(Keys.Down))
-                {
+                if (current.IsKeyDown(Keys.Down)) {
                     player.DownKey();
                 }
                 if (current.IsKeyDown(Keys.S)) {
@@ -239,15 +255,20 @@ namespace Hax {
                 if (current.IsKeyDown(Keys.D)) {
                     player.DKey();
                 }
+                if (current.IsKeyDown(Keys.F)) {
+                    player.FKey();
+                }
 
                 player.Update();
 
                 map.Update();
-                
-                if (map.CheckWin && current.IsKeyDown(Keys.Down))
-                {
+
+                if (map.CheckWin && current.IsKeyDown(Keys.Down)) {
                     win = true;
                 }
+            }
+            else {
+                textBox.ReadKeyboard(current, previous);
             }
 
             //store previous state of keyboard
@@ -270,18 +291,16 @@ namespace Hax {
 
             background.Draw(spriteBatch);
             map.Draw(spriteBatch);
-         /*   enemy.Draw(spriteBatch);
-            wally.Draw(spriteBatch);
-            wally2.Draw(spriteBatch);
-            wally3.Draw(spriteBatch);
-            wally4.Draw(spriteBatch);
-            goal.Draw(spriteBatch);*/
             player.Draw(spriteBatch);//*/
 
             if (paused == true)
             {
-
-                pausemessagething.Draw(spriteBatch);
+                if (!textMode) {
+                    pausemessagething.Draw(spriteBatch);
+                }
+                else {
+                    textBox.Draw(spriteBatch);
+                }
             }
 
             if (win == true)
