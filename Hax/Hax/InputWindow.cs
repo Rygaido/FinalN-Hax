@@ -88,7 +88,12 @@ namespace Hax {
             else if (input == "ANewStart") {
                 player.Col = Color.Blue;
             }
-            else {
+            else if (input == "LumpySpace")
+            {
+                player.Col = Color.Purple;
+            }
+            else
+            {
                 player.FailedCheat();
             }
 

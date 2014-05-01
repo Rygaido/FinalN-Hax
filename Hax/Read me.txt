@@ -1,0 +1,2 @@
+While only a few levels are functional you will notice all the files are there. it will crash after a few levels because we skipped level 4 for the moment
+controls: arrow keys for movement, p is pause, s is shoot, and d is defend
