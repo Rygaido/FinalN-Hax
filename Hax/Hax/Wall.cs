@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.GamerServices;
 //also usable as a floor
 //implements platform
 namespace Hax {
-    class Wall  : GameObject, Platform {
+    class Wall  : Platform {
         //this class probably wont need any methods, collision between movables and walls
         //are expected to be handled in the Map
 
@@ -25,39 +25,21 @@ namespace Hax {
         //platform checks movable-gameobject's location and yspeed to see if it needs to catch object and do what platforms do
         public void checkObject(Movable mov) {
 
-            if (mov.Active == true){
-                if (mov.Location.X > Location.X - mov.Location.Width)
-                { //check object is within reach on leftside
-                    if (mov.Location.X < Location.X + Location.Width)
-                    { //check object is within reach on rightside
-                        int foot = mov.Location.Y + mov.Location.Height; //store Y value of lowest point on mov object
-                        if (foot <= Location.Y)
-                        { //check object is above platform's surface
+            base.checkObject(mov);
 
-                            //all 3 requirements met, restrict object's yspeed so that it can't pass through object
-                            if (mov.ySpeed >= Location.Y - foot)
-                            {
-                                //mov.ySpeed = 0;
-                                mov.ySpeed = Location.Y - foot;
-                                mov.Landing();
-                            }
-                        }
-                    }
+            if (Location.Intersects(mov.Location))
+            {// && mov.Previous.Right < Location.Left && mov.Previous.Bottom > Location.Top){
+                if (mov.Previous.Right < Location.Center.X)
+                {
+                    mov.xSpeed = 0;
+                    mov.Location = new Rectangle(Location.Left - mov.Location.Width, mov.Location.Y, mov.Location.Width, mov.Location.Height);
+
                 }
 
-                if (Location.Intersects(mov.Location))
-                {// && mov.Previous.Right < Location.Left && mov.Previous.Bottom > Location.Top){
-                    if (mov.Previous.Right < Location.Center.X)
-                    {
-                        mov.xSpeed = 0;
-                        mov.Location = new Rectangle(Location.Left - mov.Location.Width, mov.Location.Y, mov.Location.Width, mov.Location.Height);
-                    }
-
-                    if (mov.Previous.Left > Location.Center.X)
-                    {
-                        mov.xSpeed = 0;
-                        mov.Location = new Rectangle(Location.Right, mov.Location.Y, mov.Location.Width, mov.Location.Height);
-                    }
+                if (mov.Previous.Left > Location.Center.X)
+                {
+                    mov.xSpeed = 0;
+                    mov.Location = new Rectangle(Location.Right, mov.Location.Y, mov.Location.Width, mov.Location.Height);
                 }
             }
         }

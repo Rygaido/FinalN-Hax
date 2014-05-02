@@ -3,16 +3,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-//Interface identifies object as a platform
-//Should be able to use this to find which gameobjects player and enemies can stand on
-
-//this was not in the original plan, not entirely sure if it will be useful either
-//implement into all objects that can be stood on
 namespace Hax {
-    interface Platform {
-        //interface stub... not sure if anything needs to be in here
+    class Platform : GameObject{
 
-        //methodstub //platform checks movable-gameobject's location and yspeed to see if it needs to catch object and do what platforms do
-        void checkObject(Movable mov);
+        public Platform() {
+
+            Image = ImageBank.wallImage;
+        }
+
+        //platform checks movable-gameobject's location and yspeed to see if it needs to catch object and do what platforms do
+        public void checkObject(Movable mov) {
+
+                if (mov.Location.X > Location.X - mov.Location.Width) { //check object is within reach on leftside
+                    if (mov.Location.X < Location.X + Location.Width) { //check object is within reach on rightside
+                        int foot = mov.Location.Y + mov.Location.Height; //store Y value of lowest point on mov object
+                        if (foot <= Location.Y) { //check object is above platform's surface
+
+                            //all 3 requirements met, restrict object's yspeed so that it can't pass through object
+                            if (mov.ySpeed >= Location.Y - foot) {
+                                //mov.ySpeed = 0;
+                                mov.ySpeed = Location.Y - foot;
+                                mov.Landing();
+                            }
+                        }
+                    }
+                }
+        }
+
+         //platform checks movable-gameobject's location and yspeed to see if it needs to catch object and do what platforms do
+        public void checkPlayer(Movable mov) {
+
+            if (mov.Active == true) {
+                if (mov.Location.X > Location.X - mov.Location.Width) { //check object is within reach on leftside
+                    if (mov.Location.X < Location.X + Location.Width) { //check object is within reach on rightside
+                        int foot = mov.Location.Y + mov.Location.Height; //store Y value of lowest point on mov object
+                        if (foot <= Location.Y) { //check object is above platform's surface
+
+                            //all 3 requirements met, restrict object's yspeed so that it can't pass through object
+                            if (mov.ySpeed >= Location.Y - foot) {
+                                //mov.ySpeed = 0;
+                                mov.ySpeed = Location.Y - foot;
+                                mov.Landing();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

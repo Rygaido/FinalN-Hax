@@ -67,7 +67,9 @@ namespace Hax {
                 Reset();
             }//*/
 
-            checkWin = p.Location.Intersects(goal.Location);
+            if(goal!=null){
+                checkWin = p.Location.Intersects(goal.Location);
+            }
 
             //loop through all objects in grid
             for (int i = 0; i < grid.GetLongLength(0); i++){
@@ -78,7 +80,7 @@ namespace Hax {
                         grid[i, j].Update();
 
                         try { //if the object is a wall, check collision with player and all movables
-                            Wall w = (Wall)grid[i, j];
+                            Platform w = (Platform)grid[i, j];
                             w.checkPlayer(p);
 
                             foreach (Movable m in temp) {
@@ -110,6 +112,13 @@ namespace Hax {
                                     }
                                 }
                                 catch (Exception e) { } //object was not an enemy
+                            }
+                        }
+                        else {
+                            //enemy's bullet collides with player
+                            if (b.Location.Intersects(p.Location)) {
+                                p.TakeHit();
+                                b.Active = false;
                             }
                         }
                     }
@@ -226,7 +235,7 @@ namespace Hax {
                         goal = (Goal)grid[i, j];
                     }
                     else { //otherwise just place a wall for now
-                        grid[i, j] = new Wall();
+                        grid[i, j] = new Platform();
                         grid[i, j].Location = new Rectangle(j * 50, i * 50, 50, 50);
                     }
                 }

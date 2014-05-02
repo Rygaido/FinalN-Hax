@@ -46,9 +46,12 @@ namespace Hax {
         private int bulletSpeed = 10; //speed of player's bullet
 
         //when shield is broken, set to true, then run shieldTimer for Cooldown frames to restore shield
-        private int shieldTimer = 0;
+        private int timer = 0;
         private int shieldCooldown = 150;
         private bool shieldBroken = false;
+
+        private int shootCooldown = 150;
+        private bool shotFired = false;
 
         int countDown = -1;
 
@@ -243,10 +246,10 @@ namespace Hax {
             }
 
             //increment timer when shield is broken
-            if (shieldTimer < shieldCooldown && shieldBroken) {
-                shieldTimer++;
+            if (timer < shieldCooldown && shieldBroken) {
+                timer++;
             }
-            else if (shieldTimer == shieldCooldown) { //when timer passes cooldown, repair shield
+            else if (timer == shieldCooldown) { //when timer passes cooldown, repair shield
                 shieldBroken = false;
             }
 
@@ -298,7 +301,7 @@ namespace Hax {
             else { //if player is defending, he will not take damage
                 state = Playerstate.shieldBreaking;
                 shieldBroken = true;
-                shieldTimer = 0;
+                timer = 0;
             }
             //Reset();
         }

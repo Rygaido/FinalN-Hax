@@ -14,6 +14,10 @@ namespace Hax {
         private int range = 200;
         private int bulletSpeed = 4;
 
+        private int timer = 0;
+        private int shootCooldown = 50;
+        private bool shotFired = false;
+
         //constructor takes x&y spawn coords and a player
         public ShootingMinion(Player p,int spawnX, int spawnY)
            : base(p,spawnX,spawnY-=100){ //spawn coords offset since this minion is TALL
@@ -35,14 +39,17 @@ namespace Hax {
                 if (Location.Intersects(player.Location)) {
                     CollideWithPlayer();
                 }
-                //this enemy's bullet collides with player
-                if (bullet.Location.Intersects(player.Location)) {
-                    player.TakeHit();
-                    bullet.Active = false;
-                }
+                
                 //call shoot method if conditions to shoot are met
-                if (current == Enemystate.shooting) {
+                if (current == Enemystate.shooting && !shotFired) {
                     Shoot();
+                }
+
+                if (timer > 0) {
+                    timer--;
+                }
+                if (timer <= 0) {
+                    shotFired = false;
                 }
             }
             else {
@@ -63,7 +70,10 @@ namespace Hax {
         //spawn a bullet
         public override void Shoot(){
             //can't shoot when player is to the right or if a previous bullet is active
-            if (bullet.Active==false) {
+            //if (bullet.Active==false) {
+                shotFired = true;
+                timer = shootCooldown;
+
                 //make new bullet at enemy's location
                 bullet = new Projectile(Location.X, Location.Y, true);
                 bullet.Map = map;
@@ -77,7 +87,7 @@ namespace Hax {
                     bullet.xSpeed = bulletSpeed;
                     faceLeft = true;
                 }
-            }
+            //}
         }
 
         public override void Reset() {

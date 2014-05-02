@@ -93,9 +93,9 @@ namespace Hax {
             levels.Add("levelOne");
             levels.Add("levelTwo");
             levels.Add("levelThree");
-            //levels.Add("levelFour");
+            levels.Add("levelFour");
             levels.Add("levelFive");
-            //levels.Add("levelSix");
+            levels.Add("levelSix");
             levels.Add("levelSeven");
             //levels 4 and 6 temporarily disabled due to unforseen faults in level design
 
@@ -148,7 +148,7 @@ namespace Hax {
             ImageBank.background = Content.Load<Texture2D>("800back");
             ImageBank.playerBullet = Content.Load<Texture2D>("bullet");
 
-            ImageBank.font = Content.Load<SpriteFont>("Font1");
+            ImageBank.font = Content.Load<SpriteFont>("font1");
             ImageBank.square = Content.Load<Texture2D>("WhiteSquare");
         }
 

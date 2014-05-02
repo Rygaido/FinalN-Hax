@@ -30,7 +30,8 @@ namespace Hax {
             sb.Draw(Image, new Rectangle(Location.X - 5, Location.Y - 5, Location.Width + 10, Location.Height + 10), Color.Red);
             base.Draw(sb);
 
-            sb.DrawString(ImageBank.font,input,new Vector2(Location.X, Location.Y),Color.White);
+            
+            sb.DrawString(ImageBank.font,input,new Vector2(Location.X, Location.Y),Color.White,0.0f,new Vector2(0,0),2,SpriteEffects.None,0.0f);
         }
 
         //read chars from keyboard into a string
@@ -72,25 +73,26 @@ namespace Hax {
         }
 
         public void ProcessCheat() {
-            if (input == "FistfulOfPixels") {
+            input = input.ToUpper();
+            if (input == "FISTFULOFPIXELS") {
                 player.ActivateAttack();
                 //player.Col = Color.Red;
             }
-            else if (input == "RIPColeson") {
+            else if (input == "RIPCOULSON") {
                 player.ActivateDefense();
                 //player.Col = Color.Green;
             }
-            else if (input == "SixTwoThree") {
+            else if (input == "SIXTWOTHREE") {
                 player.DeActivateCheats();
                 player.Col = Color.White;
                 //player.Col = Color.Yellow;
             }
-            else if (input == "ANewStart") {
+            else if (input == "ANEWSTART") {
                 player.Col = Color.Blue;
             }
-            else if (input == "LumpySpace")
+            else if (input == "THECHIN")
             {
-                player.Col = Color.Purple;
+                player.Col = Color.Crimson;
             }
             else
             {
