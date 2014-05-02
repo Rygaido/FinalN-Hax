@@ -94,6 +94,11 @@ namespace Hax {
             {
                 player.Col = Color.Crimson;
             }
+            else if (input == "CAPTAINCANADA")
+            {
+                player.Col = Color.Transparent;
+            }
+        
             else
             {
                 player.FailedCheat();
