@@ -97,6 +97,7 @@ namespace Hax {
             levels.Add("levelFive");
             levels.Add("levelSix");
             levels.Add("levelSeven");
+            levels.Add("bossLevel"); //just an empty map, no enemy...yet
             //levels 4 and 6 temporarily disabled due to unforseen faults in level design
 
             //create new map
