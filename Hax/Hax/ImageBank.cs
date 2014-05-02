@@ -30,6 +30,7 @@ namespace Hax {
         //lists of frames for all enemies' animations
         public static List<Texture2D> walkingMinion=new List<Texture2D>();
         public static List<Texture2D> shootingMinion = new List<Texture2D>();
+        public static List<Texture2D> lampMinion = new List<Texture2D>();
 
         //sprites for player and enemy bullets
         public static Texture2D bullet;
@@ -41,6 +42,7 @@ namespace Hax {
         public static Texture2D winscreen;
         public static Texture2D looseScreen;
         public static Texture2D wallImage;
+        public static List<Texture2D> platforms = new List<Texture2D>();
         public static Texture2D background;
 
         public static SpriteFont font; //a spritefont//used to draw text

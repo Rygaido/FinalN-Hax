@@ -90,6 +90,8 @@ namespace Hax {
             continueButton.Location = new Rectangle(resetButton.Location.Right+0, 380, 80, 40);
             
             //load list of levels
+            levels.Add("testLevel");
+
             levels.Add("levelOne");
             levels.Add("levelTwo");
             levels.Add("levelThree");
@@ -142,12 +144,18 @@ namespace Hax {
             ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1"));
             ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1_flip")); 
             ImageBank.shootingMinion.Add(Content.Load<Texture2D>("enemy2idle"));
+            ImageBank.lampMinion.Add(Content.Load<Texture2D>("lamp"));
             ImageBank.goal = Content.Load<Texture2D>("goal");
             ImageBank.pausemessage = Content.Load<Texture2D>("wordart");
             ImageBank.looseScreen = Content.Load<Texture2D>("gameoverscreen");
             ImageBank.bullet = Content.Load<Texture2D>("New Canvas");
             ImageBank.background = Content.Load<Texture2D>("800back");
             ImageBank.playerBullet = Content.Load<Texture2D>("bullet");
+
+            ImageBank.platforms.Add(Content.Load<Texture2D>("platform"));
+            ImageBank.platforms.Add(Content.Load<Texture2D>("shelfblock"));
+            ImageBank.platforms.Add(Content.Load<Texture2D>("edge1"));
+            ImageBank.platforms.Add(Content.Load<Texture2D>("edge2"));
 
             ImageBank.font = Content.Load<SpriteFont>("font1");
             ImageBank.square = Content.Load<Texture2D>("WhiteSquare");

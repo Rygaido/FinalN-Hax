@@ -200,6 +200,12 @@ namespace Hax {
                     if (m == 'a') { //'a' is a blank space
                         grid[i, j] = null;
                     }
+                    else if((int)m < ((int)'a'+50)){ //otherwise just place a wall for now
+                        grid[i, j] = new Platform();
+                        grid[i, j].Location = new Rectangle(j * 50, i * 50, 50, 50);
+
+                        grid[i, j].Image = ImageBank.platforms[(int)m-((int)'a' + 1)];
+                    }
                     else if (m == (char)((int)'a'+50)) { //'a'+50 should be the basic enemy
                         grid[i, j] = null; //treat as blank space
 
@@ -222,6 +228,17 @@ namespace Hax {
                         //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
                         movables.Add((Movable)e2);
                     }
+                    else if (m == (char)((int)'a' + 52)) { //'a'+50 should be the basic enemy
+                        grid[i, j] = null; //treat as blank space
+
+                        //then add a new minion on spot to Que of Movables
+                        LampMinion e2 = new LampMinion(p, j * 50, i * 50 - 30);
+
+                        e2.Map = this; //give enemy reference to this map object
+
+                        //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
+                        movables.Add((Movable)e2);
+                    }
                     else if (m == (char)((int)'a' + 150)) { //'a'+150 Player spawn
                         grid[i, j] = null; //treat as blank space
 
@@ -237,6 +254,7 @@ namespace Hax {
                     else { //otherwise just place a wall for now
                         grid[i, j] = new Platform();
                         grid[i, j].Location = new Rectangle(j * 50, i * 50, 50, 50);
+
                     }
                 }
             }

@@ -18,7 +18,7 @@ namespace Hax
 
         public LampMinion(Player p,int spawnX, int spawnY)
            : base(p,spawnX,spawnY){
-               Image = ImageBank.walkingMinion[0];
+               Image = ImageBank.lampMinion[0];
 
             animationSpeed = 15;
         }
@@ -27,7 +27,7 @@ namespace Hax
             //enemy only behaves if not dead
             if (current != Enemystate.dead){
                 base.Update();
-
+                ySpeed -= Movable.gravity;
                 //player intersects with enemy location
                 if (Location.Intersects(player.Location)){
                     CollideWithPlayer();
@@ -49,8 +49,6 @@ namespace Hax
 
                     //Animate(ImageBank.walkingMinion);
                     //if (hitWall == false) //set speed, if hitwall then direction is reversed
-                    xSpeed = runSpeed;
-                    
                 }
             }
             else{ //enemy is dead, 
