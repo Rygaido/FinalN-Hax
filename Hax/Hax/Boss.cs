@@ -33,33 +33,42 @@ namespace Hax {
         }
 
         public override void Update() {
-            if (current != Enemystate.notSpawned) {
+            if (current != Enemystate.notSpawned) { //boss has not spawned stage, where he's invisible
                 base.Update();
                
                 if (current == Enemystate.standing) { //Idle stage
+                    //stands idley, transitions to either offensive stage depending on distance from player
+
+                    //set idle animation
                     Animate(ImageBank.bossIdle);
 
                     col = Color.White;
 
                     xSpeed = 0;
+
+                    //face player
                     faceLeft = IsPlayerLeft();
 
-                    stateTimer++;
+                    stateTimer++; //stay in this state for predetermined number of frames
                     if (stateTimer >= idleTime) {
                         stateTimer = 0;
-                        if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(range)) {
+
+                        if (CheckInRange()) { //shoot at player if he's near
                             current = Enemystate.shooting;
                         }
-                        else {
-
+                        else {//charge at player if he's far
                             current = Enemystate.walking;
                         }
                     }
                 }
                 if (current == Enemystate.shooting) { //Shooting stage
+                    //starts shooting at player for predetermined frames
+
+                    //insert shoot animation here /////////////////////
+
                     col = Color.Red;
 
-                    stateTimer++;
+                    stateTimer++;//stay in this state for predetermined number of frames
                     if (stateTimer >= shootingTime) {
                         stateTimer = 0;
 
@@ -67,8 +76,12 @@ namespace Hax {
                     }
                 }
                 if (current == Enemystate.walking) { //pre-Chasing stage
+                    //walks twords player slowly for predetermined frames before charging
                     col = Color.Pink;
 
+                    //insert walk animation here /////////////////////
+
+                    //keep facing player //this is not done in the charge method, so he can be dodged then
                     faceLeft = IsPlayerLeft();
 
                     if (faceLeft) {
@@ -77,7 +90,8 @@ namespace Hax {
                     else {
                         xSpeed = 2;
                     }
-                    stateTimer++;
+
+                    stateTimer++;//stay in this state for predetermined number of frames
                     if (stateTimer >= walkingTime) {
                         stateTimer = 0;
 
@@ -85,35 +99,50 @@ namespace Hax {
                     }
                 }
                 if (current == Enemystate.chasing) { //Chasing stage
+                    //charges straight forward for predetermined frames or until hits wall
+
                     col = Color.Yellow;
 
+                    //insert charge animation here (probably just a faster walk) ///////////////////// 
 
-                    if (xSpeed == 0) {
+                    //does not redirect to face player in this state, will keep chargin past him
+
+                    if (xSpeed == 0) { //crashing into wall
                         stateTimer = 0;
-                        current = Enemystate.vulnerable;
+                        current = Enemystate.vulnerable; //transition to vulnerable state
                     }
 
-                    if (faceLeft) {
+                    if (faceLeft) { //Set to maximum run speed in direction faced previously
                         xSpeed = -RUN_SPEED;
                     }
                     else {
                         xSpeed = RUN_SPEED;
                     }
 
-
-                    stateTimer++;
+                    stateTimer++;//stay in this state for predetermined number of frames
                     if (stateTimer >= chargingTime) {
                         stateTimer = 0;
 
                         current = Enemystate.standing;
                     }
                 }
-                if (current == Enemystate.chasing) { //Chasing stage
+                if (current == Enemystate.vulnerable) { //vulnerable stage
                     col = Color.Orange;
+
+                    //insert vulnerable animation here /////////////////////
+
+                    stateTimer++;//stay in this state for predetermined number of frames
+                    if (stateTimer >= vulnerableTime) {
+                        stateTimer = 0;
+
+                        current = Enemystate.standing;
+                    }
                 }
             }
             else {
-                CheckInRange();
+                if (CheckInRange()) {
+                    current = Enemystate.standing; //spawn boss suddenly
+                }
             }
         }
 
@@ -135,10 +164,12 @@ namespace Hax {
         }
 
         //player gets within range on X and Y coordinates, set state to walk
-        public void CheckInRange() {
+        public bool CheckInRange() {
+            return Math.Abs(player.Location.X - Location.X) <= Math.Abs(range);
+            /*
             if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(range)) {
                 current = Enemystate.standing;
-            }
+            }*/
         }
 
         public override void CollideWithPlayer() {
@@ -149,6 +180,12 @@ namespace Hax {
             base.Reset();
             health = BOSS_HEALTH;
             //current = Enemystate.notSpawned;
+        }
+
+        public override void TakeDamage(int damage) {
+            if (current == Enemystate.vulnerable || current == Enemystate.walking || current == Enemystate.chasing || current == Enemystate.shooting) {
+                base.TakeDamage(damage);
+            }
         }
     }
 }

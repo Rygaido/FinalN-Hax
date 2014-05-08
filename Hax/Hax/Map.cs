@@ -238,7 +238,7 @@ namespace Hax {
                         grid[i, j] = null; //treat as blank space
 
                         //then add a new minion on spot to Que of Movables
-                        LampMinion e2 = new LampMinion(p, j * 50, i * 50 - 30);
+                        LampMinion e2 = new LampMinion(p, j * 50, i * 50 - 0);
 
                         e2.Map = this; //give enemy reference to this map object
 

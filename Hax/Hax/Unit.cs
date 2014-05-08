@@ -21,7 +21,7 @@ namespace Hax {
 
 
         //decrease health, check if dead
-        public void TakeDamage(int damage) {
+        public virtual void TakeDamage(int damage) {
             health -= damage;
 
             //method stub?
