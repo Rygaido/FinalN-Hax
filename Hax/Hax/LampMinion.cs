@@ -16,6 +16,9 @@ namespace Hax
         private int runSpeed = -5; //how fast minion moves, and in which direction
         private int range = 20; //minimum distance between enemy and player before enemy moves
 
+        private int deathTimer = 0;
+        private int deathTime = 120;
+
         public LampMinion(Player p,int spawnX, int spawnY)
            : base(p,spawnX,spawnY){
                Image = ImageBank.lampMinion[0];
@@ -24,9 +27,12 @@ namespace Hax
         }
 
         public override void Update(){
+
+            base.Update();
+
             //enemy only behaves if not dead
             if (current != Enemystate.dead){
-                base.Update();
+                
                 ySpeed -= Movable.gravity;
                 //player intersects with enemy location
                 if (Location.Intersects(player.Location)){
@@ -54,8 +60,12 @@ namespace Hax
             else{ //enemy is dead, 
                 //put animation here
                 //deactivate here
+
+                deathTimer++;
+                if (deathTimer >= deathTime) {
+                    active = false;
+                }
             }
-           
         }
 
         //player gets within range on X and Y coordinates, set state to walk
@@ -74,6 +84,8 @@ namespace Hax
             //standing is default behavior
             current = Enemystate.standing;
             if (runSpeed > 0) { runSpeed *= -1; } //reset runspeed to the negative direction
+            deathTimer = 0;
+            Image = ImageBank.lampMinion[0];
         }
 
         //override draw method
@@ -82,9 +94,13 @@ namespace Hax
                 base.Draw(sb);
             }
             else{ //draw upsidedown if dead
-                SpriteEffects se = SpriteEffects.FlipVertically;
+               // SpriteEffects se = SpriteEffects.FlipVertically;
+                SpriteEffects se = SpriteEffects.None;
+
+                Image = ImageBank.lampMinionBroken[0];
 
                 sb.Draw(Image, RealLocation, null, Color.White, 0.0f, new Vector2(0, 0), se, 0.0f);
+               // base.Draw(sb);
             }
         }
 

@@ -12,7 +12,7 @@ namespace Hax {
         }
 
         //platform checks movable-gameobject's location and yspeed to see if it needs to catch object and do what platforms do
-        public void checkObject(Movable mov) {
+        public virtual void checkObject(Movable mov) {
 
                 if (mov.Location.X > Location.X - mov.Location.Width) { //check object is within reach on leftside
                     if (mov.Location.X < Location.X + Location.Width) { //check object is within reach on rightside
@@ -31,7 +31,7 @@ namespace Hax {
         }
 
          //platform checks movable-gameobject's location and yspeed to see if it needs to catch object and do what platforms do
-        public void checkPlayer(Movable mov) {
+        public virtual void checkPlayer(Movable mov) {
 
             if (mov.Active == true) {
                 if (mov.Location.X > Location.X - mov.Location.Width) { //check object is within reach on leftside

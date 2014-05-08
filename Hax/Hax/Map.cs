@@ -106,8 +106,8 @@ namespace Hax {
                                     Enemy e = (Enemy)n;
 
                                     //bullet collides with enemy
-                                    if (b.Location.Intersects(e.Location)) {
-                                        e.Active = false;
+                                    if (b.Location.Intersects(e.Location) && e.Current != Enemy.Enemystate.dead) {
+                                        e.TakeDamage(1);
                                         b.Active = false;
                                     }
                                 }
@@ -199,6 +199,12 @@ namespace Hax {
 
                     if (m == 'a') { //'a' is a blank space
                         grid[i, j] = null;
+                    }
+                    else if ((int)m == (int)'a'+1) { //'a' is a blank space
+                        grid[i, j] = new Wall();
+                        grid[i, j].Location = new Rectangle(j * 50, i * 50, 50, 50);
+
+                        grid[i, j].Image = ImageBank.platforms[0];
                     }
                     else if((int)m < ((int)'a'+50)){ //otherwise just place a wall for now
                         grid[i, j] = new Platform();

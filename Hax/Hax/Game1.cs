@@ -92,7 +92,7 @@ namespace Hax {
             //load list of levels
             levels.Add("testLevel");
 
-            levels.Add("levelOne");
+        //    levels.Add("levelOne");
             levels.Add("levelTwo");
             levels.Add("levelThree");
             levels.Add("levelFour");
@@ -105,6 +105,7 @@ namespace Hax {
             //create new map
             map = new Map(player);
             map.Load(levels[0]);
+            map.Movables.Add(new Boss(player, 400,50));
 
             //load background, set it in place
             background = new GameObject();
@@ -145,12 +146,15 @@ namespace Hax {
             ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1_flip")); 
             ImageBank.shootingMinion.Add(Content.Load<Texture2D>("enemy2idle"));
             ImageBank.lampMinion.Add(Content.Load<Texture2D>("lamp"));
+            ImageBank.lampMinionBroken.Add(Content.Load<Texture2D>("lampbroke"));
             ImageBank.goal = Content.Load<Texture2D>("goal");
             ImageBank.pausemessage = Content.Load<Texture2D>("wordart");
             ImageBank.looseScreen = Content.Load<Texture2D>("gameoverscreen");
             ImageBank.bullet = Content.Load<Texture2D>("New Canvas");
             ImageBank.background = Content.Load<Texture2D>("800back");
             ImageBank.playerBullet = Content.Load<Texture2D>("bullet");
+
+            ImageBank.bossIdle.Add(Content.Load<Texture2D>("boss"));
 
             ImageBank.platforms.Add(Content.Load<Texture2D>("platform"));
             ImageBank.platforms.Add(Content.Load<Texture2D>("shelfblock"));

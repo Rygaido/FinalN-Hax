@@ -15,9 +15,12 @@ namespace Hax {
 
         //enum state for behavior of enemy// standing still, walk straight, walk after player
         //may want to add more states later
-        protected enum Enemystate { standing, walking, chasing, shooting, dead};
+        public enum Enemystate { standing, walking, chasing, shooting, dead, vulnerable, notSpawned};
 
         protected Enemystate current=Enemystate.standing;
+        public Enemystate Current {
+            get { return current; }
+        }
         protected Projectile bullet; //the bullet the enemy shoots, set to null for a non-shooting enemy
         protected Player player;
 
@@ -31,6 +34,7 @@ namespace Hax {
             spawnX = x;
             spawnY = y;
             player = p;
+            health = 1;
         }
 
         //spawn a bullet
@@ -41,11 +45,15 @@ namespace Hax {
         public override void Update(){ //apply the gravity
            base.Update();
            ySpeed += Movable.gravity;
+
+           if (health <= 0) {
+               current = Enemystate.dead;
+           }
         }
 
         public override void Reset(){ //overide reset, enemies respawn and set to standing
             active = true;
-
+            health = 1;
             Location = new Rectangle(spawnX, spawnY, Location.Width, Location.Height);
 
             current = Enemystate.standing;
