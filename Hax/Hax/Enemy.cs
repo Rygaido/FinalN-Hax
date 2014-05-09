@@ -27,6 +27,11 @@ namespace Hax {
         protected int spawnX;
         protected int spawnY;
 
+        protected bool shotFired;
+        protected int timer = 0;
+        protected int shootCooldown = 50;
+        protected int bulletSpeed = 5;
+
         public Enemy(Player p, int x, int y)
         {
             faceLeft = true;
@@ -39,7 +44,23 @@ namespace Hax {
 
         //spawn a bullet
         public virtual void Shoot() {
-            //method stub
+            shotFired = true;
+            timer = shootCooldown;
+
+            //make new bullet at enemy's location
+            bullet = new Projectile(Location.X, Location.Y, true);
+            bullet.Map = map;
+            map.Movables.Add(bullet);
+
+            //set speed negative if player is to the left
+            if (player.Location.X < Location.X) {
+                bullet.xSpeed = -bulletSpeed;
+                faceLeft = false;
+            }
+            else {
+                bullet.xSpeed = bulletSpeed;
+                faceLeft = true;
+            }
         }
 
         public override void Update(){ //apply the gravity

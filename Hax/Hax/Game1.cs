@@ -92,7 +92,7 @@ namespace Hax {
             //load list of levels
             levels.Add("testLevel");
 
-        //    levels.Add("levelOne");
+            levels.Add("levelOne");
             levels.Add("levelTwo");
             levels.Add("levelThree");
             levels.Add("levelFour");
@@ -105,7 +105,6 @@ namespace Hax {
             //create new map
             map = new Map(player);
             map.Load(levels[0]);
-            map.Movables.Add(new Boss(player, 400,50));
 
             //load background, set it in place
             background = new GameObject();
@@ -154,7 +153,7 @@ namespace Hax {
             ImageBank.background = Content.Load<Texture2D>("800back");
             ImageBank.playerBullet = Content.Load<Texture2D>("bullet");
 
-            ImageBank.bossIdle.Add(Content.Load<Texture2D>("boss"));
+            ImageBank.bossIdle.Add(Content.Load<Texture2D>("bosstank"));
 
             ImageBank.platforms.Add(Content.Load<Texture2D>("platform"));
             ImageBank.platforms.Add(Content.Load<Texture2D>("shelfblock"));

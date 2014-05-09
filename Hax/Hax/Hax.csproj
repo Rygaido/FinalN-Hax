@@ -91,7 +91,7 @@
     <Content Include="Content\800back.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\boss.png">
+    <Content Include="Content\bosstank.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\bullet.png">

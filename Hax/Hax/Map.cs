@@ -223,7 +223,7 @@ namespace Hax {
                         //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
                         movables.Add((Movable)mini);
                     }
-                    else if (m == (char)((int)'a' + 51)) { //'a'+50 should be the basic enemy
+                    else if (m == (char)((int)'a' + 51)) { //'a'+51 should be the shooting enemy
                         grid[i, j] = null; //treat as blank space
 
                         //then add a new minion on spot to Que of Movables
@@ -234,7 +234,7 @@ namespace Hax {
                         //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
                         movables.Add((Movable)e2);
                     }
-                    else if (m == (char)((int)'a' + 52)) { //'a'+50 should be the basic enemy
+                    else if (m == (char)((int)'a' + 52)) { //'a'+52 should be the lamp enemy
                         grid[i, j] = null; //treat as blank space
 
                         //then add a new minion on spot to Que of Movables
@@ -244,6 +244,17 @@ namespace Hax {
 
                         //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
                         movables.Add((Movable)e2);
+                    }
+                    else if (m == (char)((int)'a' + 53)) { //'a'+53 should be the BOSS
+                        grid[i, j] = null; //treat as blank space
+
+                        //then add a new minion on spot to Que of Movables
+                        Boss b = new Boss(p, j * 50, i * 50 - 0);
+
+                        b.Map = this; //give enemy reference to this map object
+
+                        //mini.Location = new Rectangle(j * 50, i * 50, 50, 50);
+                        movables.Add((Movable)b);
                     }
                     else if (m == (char)((int)'a' + 150)) { //'a'+150 Player spawn
                         grid[i, j] = null; //treat as blank space

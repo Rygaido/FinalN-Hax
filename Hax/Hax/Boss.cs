@@ -25,7 +25,7 @@ namespace Hax {
         private int RUN_SPEED = 10;
 
         public Boss(Player p, int x, int y):base(p,x,y) {
-            Location = new Rectangle(x, y, 165, 107);
+            Location = new Rectangle(x, y, 185, 151);
 
             Image = ImageBank.bossIdle[0];
             health = BOSS_HEALTH;
@@ -35,7 +35,14 @@ namespace Hax {
         public override void Update() {
             if (current != Enemystate.notSpawned) { //boss has not spawned stage, where he's invisible
                 base.Update();
-               
+
+                if (timer > 0) { //reset timer for shooting
+                    timer--;
+                }
+                if (timer <= 0) {
+                    shotFired = false;
+                }
+
                 if (current == Enemystate.standing) { //Idle stage
                     //stands idley, transitions to either offensive stage depending on distance from player
 
@@ -67,6 +74,8 @@ namespace Hax {
                     //insert shoot animation here /////////////////////
 
                     col = Color.Red;
+
+                    Shoot();
 
                     stateTimer++;//stay in this state for predetermined number of frames
                     if (stateTimer >= shootingTime) {
