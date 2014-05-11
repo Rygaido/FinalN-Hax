@@ -38,6 +38,7 @@ namespace Hax {
         public static List<Texture2D> bossChasing = new List<Texture2D>();
         public static List<Texture2D> bossShooting = new List<Texture2D>();
         public static List<Texture2D> bossVulnerable = new List<Texture2D>();
+        public static List<Texture2D> bossLaser = new List<Texture2D>();
 
         //sprites for player and enemy bullets
         public static Texture2D bullet;

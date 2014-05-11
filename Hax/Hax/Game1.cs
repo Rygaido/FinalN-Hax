@@ -91,7 +91,7 @@ namespace Hax {
             
             //load list of levels
             levels.Add("testLevel");
-
+            /*
             levels.Add("levelOne");
             levels.Add("levelTwo");
             levels.Add("levelThree");
@@ -99,7 +99,7 @@ namespace Hax {
             levels.Add("levelFive");
             levels.Add("levelSix");
             levels.Add("levelSeven");
-            levels.Add("bossLevel"); //just an empty map, no enemy...yet
+            levels.Add("bossLevel"); //just an empty map, no enemy...yet*/
             //levels 4 and 6 temporarily disabled due to unforseen faults in level design
 
             //create new map
@@ -154,6 +154,10 @@ namespace Hax {
             ImageBank.playerBullet = Content.Load<Texture2D>("bullet");
 
             ImageBank.bossIdle.Add(Content.Load<Texture2D>("bosstank"));
+            ImageBank.bossChasing.Add(Content.Load<Texture2D>("chargetank"));
+            ImageBank.bossShooting.Add(Content.Load<Texture2D>("robotturtle"));
+            ImageBank.bossVulnerable.Add(Content.Load<Texture2D>("vunerable"));
+            ImageBank.bossLaser.Add(Content.Load<Texture2D>("laser"));
 
             ImageBank.platforms.Add(Content.Load<Texture2D>("platform"));
             ImageBank.platforms.Add(Content.Load<Texture2D>("shelfblock"));

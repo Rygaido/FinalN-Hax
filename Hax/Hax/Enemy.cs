@@ -22,6 +22,7 @@ namespace Hax {
             get { return current; }
         }
         protected Projectile bullet; //the bullet the enemy shoots, set to null for a non-shooting enemy
+        protected Texture2D bulletImage = ImageBank.bullet;
         protected Player player;
 
         protected int spawnX;
@@ -49,17 +50,18 @@ namespace Hax {
 
             //make new bullet at enemy's location
             bullet = new Projectile(Location.X, Location.Y, true);
+            bullet.Image = bulletImage;
             bullet.Map = map;
             map.Movables.Add(bullet);
 
             //set speed negative if player is to the left
             if (player.Location.X < Location.X) {
                 bullet.xSpeed = -bulletSpeed;
-                faceLeft = false;
+                faceLeft = true;
             }
             else {
                 bullet.xSpeed = bulletSpeed;
-                faceLeft = true;
+                faceLeft = false;
             }
         }
 

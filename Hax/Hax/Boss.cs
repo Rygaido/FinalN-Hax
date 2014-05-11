@@ -30,6 +30,8 @@ namespace Hax {
             Image = ImageBank.bossIdle[0];
             health = BOSS_HEALTH;
             current = Enemystate.notSpawned;
+
+            bulletImage = ImageBank.bossLaser[0];
         }
 
         public override void Update() {
@@ -43,13 +45,18 @@ namespace Hax {
                     shotFired = false;
                 }
 
+                //player intersects with enemy location
+                if (Location.Intersects(player.Location) && current != Enemystate.vulnerable && current != Enemystate.dead) {
+                    CollideWithPlayer();
+                }
+
                 if (current == Enemystate.standing) { //Idle stage
                     //stands idley, transitions to either offensive stage depending on distance from player
 
                     //set idle animation
                     Animate(ImageBank.bossIdle);
 
-                    col = Color.White;
+              //      col = Color.White;
 
                     xSpeed = 0;
 
@@ -71,9 +78,10 @@ namespace Hax {
                 if (current == Enemystate.shooting) { //Shooting stage
                     //starts shooting at player for predetermined frames
 
-                    //insert shoot animation here /////////////////////
+                    //set idle animation
+                    Animate(ImageBank.bossShooting);
 
-                    col = Color.Red;
+               ///     col = Color.Red;
 
                     Shoot();
 
@@ -86,9 +94,10 @@ namespace Hax {
                 }
                 if (current == Enemystate.walking) { //pre-Chasing stage
                     //walks twords player slowly for predetermined frames before charging
-                    col = Color.Pink;
+              //      col = Color.Pink;
 
-                    //insert walk animation here /////////////////////
+                    //set idle animation
+                    Animate(ImageBank.bossChasing);
 
                     //keep facing player //this is not done in the charge method, so he can be dodged then
                     faceLeft = IsPlayerLeft();
@@ -110,9 +119,10 @@ namespace Hax {
                 if (current == Enemystate.chasing) { //Chasing stage
                     //charges straight forward for predetermined frames or until hits wall
 
-                    col = Color.Yellow;
+               //     col = Color.Yellow;
 
-                    //insert charge animation here (probably just a faster walk) ///////////////////// 
+                    //set idle animation
+                    Animate(ImageBank.bossChasing);
 
                     //does not redirect to face player in this state, will keep chargin past him
 
@@ -136,9 +146,11 @@ namespace Hax {
                     }
                 }
                 if (current == Enemystate.vulnerable) { //vulnerable stage
-                    col = Color.Orange;
+                  //  col = Color.Orange;
+                    xSpeed = 0;
 
-                    //insert vulnerable animation here /////////////////////
+                    //set idle animation
+                    Animate(ImageBank.bossVulnerable);
 
                     stateTimer++;//stay in this state for predetermined number of frames
                     if (stateTimer >= vulnerableTime) {
@@ -174,7 +186,7 @@ namespace Hax {
 
         //player gets within range on X and Y coordinates, set state to walk
         public bool CheckInRange() {
-            return Math.Abs(player.Location.X - Location.X) <= Math.Abs(range);
+            return Location.X - player.Location.X <= range && player.Location.X - (Location.X+Location.Width) <=range;
             /*
             if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(range)) {
                 current = Enemystate.standing;
@@ -182,7 +194,13 @@ namespace Hax {
         }
 
         public override void CollideWithPlayer() {
-            
+            //if (current != Enemystate.vulnerable && current != Enemystate.dead ) { 
+                if (player.State == Player.Playerstate.defending) {
+                    current = Enemystate.vulnerable;
+                    TakeDamage(5);
+                }
+                player.TakeHit();
+           // }
         }
 
         public override void Reset() {
