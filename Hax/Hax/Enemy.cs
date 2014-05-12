@@ -15,7 +15,7 @@ namespace Hax {
 
         //enum state for behavior of enemy// standing still, walk straight, walk after player
         //may want to add more states later
-        public enum Enemystate { standing, walking, chasing, shooting, dead, vulnerable, notSpawned};
+        public enum Enemystate { standing, walking, chasing, warning, shooting, dead, vulnerable, notSpawned};
 
         protected Enemystate current=Enemystate.standing;
         public Enemystate Current {
@@ -33,6 +33,9 @@ namespace Hax {
         protected int shootCooldown = 50;
         protected int bulletSpeed = 5;
 
+        protected int bulletX=0;
+        protected int bulletY = 0;
+
         public Enemy(Player p, int x, int y)
         {
             faceLeft = true;
@@ -49,19 +52,21 @@ namespace Hax {
             timer = shootCooldown;
 
             //make new bullet at enemy's location
-            bullet = new Projectile(Location.X, Location.Y, true);
+            bullet = new Projectile(Location.X+bulletX, Location.Y+bulletY, true);
+            //bullet.Update();
+            bullet.Offset = offset;
             bullet.Image = bulletImage;
             bullet.Map = map;
             map.Movables.Add(bullet);
 
             //set speed negative if player is to the left
-            if (player.Location.X < Location.X) {
+            if (faceLeft){//player.Location.X < Location.X) {
                 bullet.xSpeed = -bulletSpeed;
-                faceLeft = true;
+               // faceLeft = true;
             }
             else {
                 bullet.xSpeed = bulletSpeed;
-                faceLeft = false;
+              //  faceLeft = false;
             }
         }
 

@@ -90,7 +90,7 @@ namespace Hax {
             continueButton.Location = new Rectangle(resetButton.Location.Right+0, 380, 80, 40);
             
             //load list of levels
-            levels.Add("testLevel");
+          //  levels.Add("testLevel");
             /*
             levels.Add("levelOne");
             levels.Add("levelTwo");
@@ -98,9 +98,8 @@ namespace Hax {
             levels.Add("levelFour");
             levels.Add("levelFive");
             levels.Add("levelSix");
-            levels.Add("levelSeven");
-            levels.Add("bossLevel"); //just an empty map, no enemy...yet*/
-            //levels 4 and 6 temporarily disabled due to unforseen faults in level design
+            levels.Add("levelSeven");*/
+            levels.Add("bossLevel"); //just an empty map, no enemy...yet
 
             //create new map
             map = new Map(player);

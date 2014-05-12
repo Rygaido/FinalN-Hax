@@ -45,7 +45,8 @@ namespace Hax {
         }
 
         //platform checks movable-gameobject's location and yspeed to see if it needs to catch object and do what platforms do
-        public override void checkPlayer(Movable mov) {
+        public override void checkPlayer(Player mov) {
+
 
             if (mov.Active == true) {
                 if (mov.Location.X > Location.X - mov.Location.Width) { //check object is within reach on leftside
@@ -58,6 +59,8 @@ namespace Hax {
                                 //mov.ySpeed = 0;
                                 mov.ySpeed = Location.Y - foot;
                                 mov.Landing();
+
+                                mov.collidingWithPlatform = false;
                             }
                         }
                     }

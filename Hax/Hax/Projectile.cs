@@ -44,10 +44,10 @@ namespace Hax {
                 active = false;
             }
 
-            if (RealLocation.X <= -Location.Width) { //remove bullet if it passes offscreen to the left
+            if (RealLocation.X <= -Location.Width && Location.X < 0) { //remove bullet if it passes offscreen to the left
                 Active = false;
             }
-            if (RealLocation.X >= 800) { //or to the right
+            if (RealLocation.X >= 800 && Location.X > map.Width) { //or to the right
                 Active = false;
             }
         }

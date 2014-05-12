@@ -55,6 +55,8 @@ namespace Hax {
 
         int countDown = -1;
 
+        public bool collidingWithPlatform=false;
+
         public Player() { //default constructor
             health = 1;
             Image = ImageBank.defaultImage;
@@ -157,7 +159,10 @@ namespace Hax {
             }
         }
         public void DownKey() { //down key
+            if(collidingWithPlatform){
 
+                Location = new Rectangle(Location.X, Location.Y + 1, Location.Width, Location.Height);
+            }
 
         }
         public void SKey() { //s key shoots
@@ -268,6 +273,8 @@ namespace Hax {
             } if (countDown == 0) {
                 col = Color.White;
             }
+
+            //collidingWithPlatform = false;
         }
 
         //player touches ground and can jump again

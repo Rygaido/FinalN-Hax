@@ -23,6 +23,14 @@ namespace Hax {
         private GameObject[,] grid; //contains all game objects
         private int row;
         private int col;
+
+        private int length;
+        private int width;
+        public int Length {
+            get { return length; }
+        }public int Width{
+            get { return width;}
+        }
         public static Vector2 scroll; //hold the change in X and Y position due to scrolling
 
         private List<Movable> movables; //List holds all moving objects
@@ -188,6 +196,8 @@ namespace Hax {
             row = r;
             int c = reader.ReadInt32();
             col = c;
+            length = r * 50;
+            width = c * 50;
             string s = reader.ReadString();
             char[] chars = s.ToCharArray();
 

@@ -18,11 +18,19 @@ namespace Hax {
         private int idleTime = 180;
         private int shootingTime = 180;
         private int walkingTime = 120;
+        private int warningTime = 120;
         private int chargingTime = 180;
         private int vulnerableTime = 180;
 
-        private int BOSS_HEALTH = 20;
+        private const int BOSS_HEALTH = 40;
         private int RUN_SPEED = 10;
+
+        private int random;
+
+        private int flashTime = 0;
+        private int flashTimer = -1;
+
+        Random rand;
 
         public Boss(Player p, int x, int y):base(p,x,y) {
             Location = new Rectangle(x, y, 185, 151);
@@ -32,6 +40,8 @@ namespace Hax {
             current = Enemystate.notSpawned;
 
             bulletImage = ImageBank.bossLaser[0];
+
+            rand = new Random();
         }
 
         public override void Update() {
@@ -45,6 +55,39 @@ namespace Hax {
                     shotFired = false;
                 }
 
+                if (health < BOSS_HEALTH / 4) {
+                    //col = Color.Red;
+                    RUN_SPEED = 15;
+                    idleTime = 90;
+                    flashTimer = 30;
+                }
+                else if (health < BOSS_HEALTH / 2) {
+                    //col = Color.Red;
+                    RUN_SPEED = 10;
+                    idleTime = 90;
+                    flashTimer = 60;
+                }
+                else {
+                    col = Color.White;
+                    RUN_SPEED = 10;
+                    flashTimer = -1;
+                    idleTime = 180;
+                }
+
+                if (flashTimer > 0) {
+                    flashTime++;
+
+                    if (flashTime == flashTimer) {
+                        flashTime = 0;
+                        if (col == Color.Red) {
+                            col = Color.White;
+                        }
+                        else {
+                            col = Color.Red;
+                        }
+                    }
+                }
+
                 //player intersects with enemy location
                 if (Location.Intersects(player.Location) && current != Enemystate.vulnerable && current != Enemystate.dead) {
                     CollideWithPlayer();
@@ -56,8 +99,6 @@ namespace Hax {
                     //set idle animation
                     Animate(ImageBank.bossIdle);
 
-              //      col = Color.White;
-
                     xSpeed = 0;
 
                     //face player
@@ -67,12 +108,29 @@ namespace Hax {
                     if (stateTimer >= idleTime) {
                         stateTimer = 0;
 
+
+
                         if (CheckInRange()) { //shoot at player if he's near
-                            current = Enemystate.shooting;
+                            current = Enemystate.warning;
                         }
                         else {//charge at player if he's far
                             current = Enemystate.walking;
                         }
+                    }
+                }
+                if (current == Enemystate.warning) { //warning stage
+                    //shooting animation plays before actually shooting
+
+                    //set sho0ting animation
+                    Animate(ImageBank.bossShooting);
+
+                    stateTimer++;//stay in this state for predetermined number of frames
+                    if (stateTimer >= warningTime) {
+                        stateTimer = 0;
+
+                        random = rand.Next(0,2);
+
+                        current = Enemystate.shooting;
                     }
                 }
                 if (current == Enemystate.shooting) { //Shooting stage
@@ -82,7 +140,18 @@ namespace Hax {
                     Animate(ImageBank.bossShooting);
 
                ///     col = Color.Red;
-
+                    if (random == 0) {
+                        bulletY = 100;
+                    }
+                    else {
+                        bulletY = 0;
+                    }
+                    if (!faceLeft) {
+                        bulletX = Location.Width;
+                    }
+                    else {
+                        bulletX = 0;
+                    }
                     Shoot();
 
                     stateTimer++;//stay in this state for predetermined number of frames
@@ -100,7 +169,7 @@ namespace Hax {
                     Animate(ImageBank.bossChasing);
 
                     //keep facing player //this is not done in the charge method, so he can be dodged then
-                    faceLeft = IsPlayerLeft();
+              //      faceLeft = IsPlayerLeft();
 
                     if (faceLeft) {
                         xSpeed = -2;
@@ -204,8 +273,10 @@ namespace Hax {
         }
 
         public override void Reset() {
+            
             base.Reset();
-            health = BOSS_HEALTH;
+            health = 40;
+            col = Color.White;
             //current = Enemystate.notSpawned;
         }
 

@@ -36,7 +36,9 @@ namespace Hax {
                 if (Location.Intersects(player.Location)) {
                     CollideWithPlayer();
                 }
-                
+                if(player.Location.X < Location.X) {
+                    faceLeft = true;
+                }
                 //call shoot method if conditions to shoot are met
                 if (current == Enemystate.shooting && !shotFired) {
                     Shoot();

@@ -16,7 +16,11 @@ namespace Hax {
 
         private Rectangle location; //represent space occupied by object, should have X&Y coordinates and a length&width
         private Texture2D image; //the image drawn over object's rectangle
-        private Vector2 offset; //a modifier for location based on the scrolling grid
+        protected Vector2 offset; //a modifier for location based on the scrolling grid
+        public Vector2 Offset {
+            get { return offset; }
+            set { offset = value; }
+        }
 
         //timer used for animation, speed at which animation frames change, and current frame visable
         protected int animationTimer = 0;
