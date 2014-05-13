@@ -28,34 +28,28 @@ namespace Hax
 
         public override void Update(){
 
-            base.Update();
-
             //enemy only behaves if not dead
             if (current != Enemystate.dead){
-                
-                ySpeed -= Movable.gravity;
+
+                if (current == Enemystate.walking) {//set speed for if enemy is walking (falling)
+
+                    if (ySpeed == 0) { //dead upon contact with floor
+                        current = Enemystate.dead;
+                    }
+                }
+
+                if (current == Enemystate.standing) { //standing lamp defies gravity
+                    ySpeed = 0;
+
+                    //check if player is nearby to start walking
+                    CheckInRange();
+                }
                 //player intersects with enemy location
                 if (Location.Intersects(player.Location)){
                     CollideWithPlayer();
                 }
 
-                //changes enemy direction if enemy walked into a wall
-                if (current==Enemystate.walking && ySpeed == 0){
-                    current = Enemystate.dead;
-                }
-
-                //if enemy is standing, check if player is nearby to start walking
-                if (current==Enemystate.standing ) {
-                    CheckInRange();
-                }
-
-                if (current==Enemystate.walking) {//set speed for if enemy is walking
-
-                    ySpeed += Movable.gravity;
-
-                    //Animate(ImageBank.walkingMinion);
-                    //if (hitWall == false) //set speed, if hitwall then direction is reversed
-                }
+                
             }
             else{ //enemy is dead, 
                 //put animation here
@@ -66,6 +60,9 @@ namespace Hax
                     active = false;
                 }
             }
+
+            base.Update();
+
         }
 
         //player gets within range on X and Y coordinates, set state to walk

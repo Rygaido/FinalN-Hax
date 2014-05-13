@@ -38,8 +38,12 @@ namespace Hax {
         //alternatively, just replace with xSpeed and ySpeed ints,
         public int xSpeed;
         public int ySpeed;
-
-        public bool collidingWithWall = false;
+        protected bool collidingWithWall = false;
+        protected bool collidingWithPlatform = false;
+        public bool CollidingWithPlatform {
+            get { return collidingWithPlatform; }
+            set { collidingWithPlatform = value; }
+        }
 
         public const int gravity= 1; //player and enemies accelerate downward by pixels per frame per frame
         //GRAVITY PULLS IN THE POSITIVE Y DIRECTION!!! //lower on screen == higher Y //don't confuse that
@@ -75,7 +79,8 @@ namespace Hax {
         }
         ///*
         public virtual void Reset() {
-
+            xSpeed = 0;
+            ySpeed = 0;
         }//*/
     }
 }

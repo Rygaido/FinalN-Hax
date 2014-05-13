@@ -29,7 +29,7 @@ namespace Hax {
             set { state = value; }
         }
 
-        private int jumpSpeed = 20; //vertical speed at instant of jump
+        private int jumpSpeed =20; //vertical speed at instant of jump
         private int runSpeed = 5; //max running speed
         private int acceleration = 1;
 
@@ -46,16 +46,15 @@ namespace Hax {
         private int bulletSpeed = 10; //speed of player's bullet
 
         //when shield is broken, set to true, then run shieldTimer for Cooldown frames to restore shield
-        private int timer = 0;
+        private int shieldTimer = 0;
         private int shieldCooldown = 150;
         private bool shieldBroken = false;
 
-        private int shootCooldown = 150;
+        private int shootCooldown = 50;
+        private int shootTimer = 0;
         private bool shotFired = false;
 
         int countDown = -1;
-
-        public bool collidingWithPlatform=false;
 
         public Player() { //default constructor
             health = 1;
@@ -126,9 +125,10 @@ namespace Hax {
         public void Shoot() {
             //can't shoot when player is to the right
            // this.col = Color.Red;
-            if (bullet.Active == false) {
+            if (!shotFired) {
                 //make new bullet at player's location
                 bullet = new Projectile(Location.X, Location.Y, false);
+                shotFired = true;
 
                 //set speed negative if player is facing the left
                 bullet.xSpeed = bulletSpeed;
@@ -188,6 +188,7 @@ namespace Hax {
             if (previous != state) {
                // ResetAnimation();
             }
+         //   base.Update();
 
             if (state == Playerstate.standing || state == Playerstate.defending || state == Playerstate.attacking) { //if player is standing still, deccelarate
                 if (xSpeed > 0) { xSpeed-=acceleration; }
@@ -198,10 +199,18 @@ namespace Hax {
             Map.scroll.X -= xSpeed;
             Map.scroll.Y -= ySpeed;
 
+            if (shotFired) { //if shot fired
+                shootTimer++; //wait [shootCooldown] many frames to renenable shooting
+                if (shootTimer >= shootCooldown) {
+                    shootTimer = 0;
+                    shotFired = false;
+                }
+            }
+
             //update player's image based on current state
             if (state == Playerstate.jumping) {
                 Animate(ImageBank.playerJump);
-            } else if (state == Playerstate.walking) {
+            } else if (state == Playerstate.walking) { //most animations have variants depending on cheat state
                 animationSpeed = 7;
                 if (cheat == Cheatstate.attack) {
                     Animate(ImageBank.playerWalkShoot);
@@ -250,11 +259,11 @@ namespace Hax {
                 animationTimer = 25;
             }
 
-            //increment timer when shield is broken
-            if (timer < shieldCooldown && shieldBroken) {
-                timer++;
+            //increment shieldTimer when shield is broken
+            if (shieldTimer < shieldCooldown && shieldBroken) {
+                shieldTimer++;
             }
-            else if (timer == shieldCooldown) { //when timer passes cooldown, repair shield
+            else if (shieldTimer == shieldCooldown) { //when shieldTimer passes cooldown, repair shield
                 shieldBroken = false;
             }
 
@@ -308,7 +317,7 @@ namespace Hax {
             else { //if player is defending, he will not take damage
                 state = Playerstate.shieldBreaking;
                 shieldBroken = true;
-                timer = 0;
+                shieldTimer = 0;
             }
             //Reset();
         }

@@ -24,6 +24,8 @@ namespace Hax {
                faceLeft = false;
                bullet = new Projectile(0, 0, true);
                bullet.Active = false;
+
+               bulletY = 10;
         }
 
         public override void Update() {
@@ -38,6 +40,8 @@ namespace Hax {
                 }
                 if(player.Location.X < Location.X) {
                     faceLeft = true;
+                } else {
+                    faceLeft = false;
                 }
                 //call shoot method if conditions to shoot are met
                 if (current == Enemystate.shooting && !shotFired) {

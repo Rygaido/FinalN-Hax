@@ -89,7 +89,7 @@ namespace Hax {
 
                         try { //if the object is a wall, check collision with player and all movables
                             Platform w = (Platform)grid[i, j];
-                            w.checkPlayer(p);
+                            w.checkObject(p);
 
                             foreach (Movable m in temp) {
                                 w.checkObject(m);

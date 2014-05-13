@@ -80,6 +80,8 @@ namespace Hax {
         }
 
         public override void Reset(){ //overide reset, enemies respawn and set to standing
+            base.Reset();
+
             active = true;
             health = 1;
             Location = new Rectangle(spawnX, spawnY, Location.Width, Location.Height);

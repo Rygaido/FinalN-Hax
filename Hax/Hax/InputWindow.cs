@@ -87,6 +87,7 @@ namespace Hax {
                 player.Col = Color.White;
                 //player.Col = Color.Yellow;
             }
+                //color coded cheatcodes, originally for debugging, now for lulz
             else if (input == "ANEWSTART") {
                 player.Col = Color.Blue;
             }
@@ -97,14 +98,16 @@ namespace Hax {
             else if (input == "CAPTAINCANADA")
             {
                 player.Col = Color.Transparent;
+            } 
+            else if (input == "THISPARTYSOVER") {
+                player.Col = new Color(200,0,255);
             }
-        
-            else
+            else//unrecognized cheat code
             {
                 player.FailedCheat();
             }
 
-            input = "";
+            input = "";//reset input everytime
         }
     }
 }
