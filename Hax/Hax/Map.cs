@@ -20,7 +20,7 @@ using System.IO;
 namespace Hax {
     class Map {
        // public GameObject background;
-        private GameObject[,] grid; //contains all game objects
+        private GameObject[,] grid = new GameObject[0,0]; //contains all game objects
         private int row;
         private int col;
 
@@ -31,15 +31,15 @@ namespace Hax {
         }public int Width{
             get { return width;}
         }
-        public static Vector2 scroll; //hold the change in X and Y position due to scrolling
+        public static Vector2 scroll=new Vector2(0,0); //hold the change in X and Y position due to scrolling
 
         private List<Movable> movables; //List holds all moving objects
         public List<Movable> Movables {
             get { return movables; }
             set { movables = value; }
         }
-        private List<Movable> temp; //holds a duplicate list for foreachloops
-        private List<Movable> resetList;
+        private List<Movable> temp=new List<Movable>(); //holds a duplicate list for foreachloops
+        private List<Movable> resetList=new List<Movable>();
         //enemies, projectiles and platforms not constrained to grid
         //Idea: Enemies are loaded from file to grid, so make them inactive until they scroll
         //onto screen, then activate them, remove from grid and add them to queue
@@ -47,18 +47,26 @@ namespace Hax {
         private Player p; //reference to player objecy
 
         private Goal goal;
-        private bool checkWin;
+        private bool checkWin; //player touches stairs
         public bool CheckWin{
             get { return checkWin; }
+            set { checkWin = value; }
+        }
+
+        private bool gameOver = false;//Boss is beaten
+        public bool GameOver
+        {
+            get {return gameOver;}
+            set { gameOver = value; }
         }
 
         private Point playerSpawn;
-        public Point PlayerSpawn {
+        public Point PlayerSpawn { //point player spawns/respawns
             get { return playerSpawn; }
             set { playerSpawn = value; }
         }
 
-        public Map(Player player){
+        public Map(Player player){ //default constructor, takes player
             p = player;
             p.Map = this;
             movables = new List<Movable>();
@@ -277,6 +285,13 @@ namespace Hax {
 
                         grid[i,j].Location= new Rectangle(j * 50, i * 50,50,50);
                         goal = (Goal)grid[i, j];
+                    }
+                    else if (m == (char)((int)'a' + 153))
+                    { //'a'+153 Tutorial "keys" image
+                        grid[i, j] = new GameObject(); //treat as blank space
+
+                        grid[i, j].Location = new Rectangle(j * 50, i * 50, 300, 150);
+                        grid[i, j].Image = ImageBank.keys;
                     }
                     else { //otherwise just place a wall for now
                         grid[i, j] = new Platform();

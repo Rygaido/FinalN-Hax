@@ -26,7 +26,7 @@ namespace Hax {
             
             if (hostile == false) { //bullet owned by player
                 Image = ImageBank.playerBullet;
-                Location = new Rectangle(x + 30, y + 40, 10, 10);
+                Location = new Rectangle(x, y, 10, 10);
             }
             else { //bullet owned by enemy
                 Image = ImageBank.bullet;

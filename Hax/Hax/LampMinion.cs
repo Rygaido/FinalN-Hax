@@ -14,7 +14,7 @@ namespace Hax
     class LampMinion:Enemy
     {
         private int runSpeed = -5; //how fast minion moves, and in which direction
-        private int range = 20; //minimum distance between enemy and player before enemy moves
+        private int range = 80; //minimum distance between enemy and player before enemy moves
 
         private int deathTimer = 0;
         private int deathTime = 120;
@@ -68,7 +68,8 @@ namespace Hax
         //player gets within range on X and Y coordinates, set state to walk
         public void CheckInRange()
         {
-            if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(range) && player.Location.Y - Location.Y > 0){
+            if (Math.Abs(player.Location.Center.X - Location.Center.X) <= Math.Abs(range) && player.Location.Center.Y - Location.Center.Y > 0)
+            {
                 current = Enemystate.walking;
                 ySpeed += Movable.gravity;
             }

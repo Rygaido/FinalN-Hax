@@ -15,7 +15,7 @@ namespace Hax {
 
         //enum state for behavior of enemy// standing still, walk straight, walk after player
         //may want to add more states later
-        public enum Enemystate { standing, walking, chasing, warning, shooting, dead, vulnerable, notSpawned};
+        public enum Enemystate { standing, walking, chasing, warning, shooting, dead, vulnerable, notSpawned, crown};
 
         protected Enemystate current=Enemystate.standing;
         public Enemystate Current {
@@ -30,7 +30,7 @@ namespace Hax {
 
         protected bool shotFired;
         protected int timer = 0;
-        protected int shootCooldown = 50;
+        protected int shootCooldown = 150;
         protected int bulletSpeed = 5;
 
         protected int bulletX=0;

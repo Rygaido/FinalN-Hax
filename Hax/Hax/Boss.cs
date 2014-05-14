@@ -21,11 +21,15 @@ namespace Hax {
         private int warningTime = 120;
         private int chargingTime = 180;
         private int vulnerableTime = 180;
+        private int deathTime = 90;
+        private int deathTimer = 0;
 
-        private const int BOSS_HEALTH = 40;
+        private const int BOSS_HEALTH = 35;
         private int RUN_SPEED = 10;
 
         private int random;
+
+        private int chanceToCharge = 1;
 
         private int flashTime = 0;
         private int flashTimer = -1;
@@ -55,29 +59,35 @@ namespace Hax {
                     shotFired = false;
                 }
 
-                if (health < BOSS_HEALTH / 4) {
+                if (health <= 0)
+                {
+                }
+                else if (health < BOSS_HEALTH / 4) //boss flashes red at different intervals based on damage taken relative to health
+                {
                     //col = Color.Red;
-                    RUN_SPEED = 15;
+                    RUN_SPEED = 15; //run speed increases too
                     idleTime = 90;
                     flashTimer = 30;
                 }
-                else if (health < BOSS_HEALTH / 2) {
+                else if (health < BOSS_HEALTH / 2)
+                {
                     //col = Color.Red;
                     RUN_SPEED = 10;
                     idleTime = 90;
                     flashTimer = 60;
                 }
-                else {
+                else
+                {
                     col = Color.White;
                     RUN_SPEED = 10;
                     flashTimer = -1;
                     idleTime = 180;
                 }
 
-                if (flashTimer > 0) {
+                if (flashTimer > 0) {//boss flashes red for increments of time when damaged
                     flashTime++;
 
-                    if (flashTime == flashTimer) {
+                    if (flashTime >= flashTimer) {
                         flashTime = 0;
                         if (col == Color.Red) {
                             col = Color.White;
@@ -90,7 +100,14 @@ namespace Hax {
 
                 //player intersects with enemy location
                 if (Location.Intersects(player.Location) && current != Enemystate.vulnerable && current != Enemystate.dead) {
-                    CollideWithPlayer();
+                    if (current == Enemystate.crown) //collide with player in crownstate: tell map player won
+                    {
+                        map.GameOver = true;
+                    }
+                    else //otherwise, kill player
+                    {
+                        CollideWithPlayer();
+                    }
                 }
 
                 if (current == Enemystate.standing) { //Idle stage
@@ -108,9 +125,18 @@ namespace Hax {
                     if (stateTimer >= idleTime) {
                         stateTimer = 0;
 
+                        if (!CheckInRange()) //if player is far away, increase chance to charge
+                        {
+                            chanceToCharge = 2;
+                        }
+                        else
+                        {
+                            chanceToCharge = 1;
+                        }
 
+                        random = rand.Next(1,4);
 
-                        if (CheckInRange()) { //shoot at player if he's near
+                        if (random > chanceToCharge) { //shoot at player if random is greater than chance to charge
                             current = Enemystate.warning;
                         }
                         else {//charge at player if he's far
@@ -158,7 +184,7 @@ namespace Hax {
                     if (stateTimer >= shootingTime) {
                         stateTimer = 0;
 
-                        current = Enemystate.standing;
+                        current = Enemystate.standing; //revert to standing state
                     }
                 }
                 if (current == Enemystate.walking) { //pre-Chasing stage
@@ -228,6 +254,24 @@ namespace Hax {
                         current = Enemystate.standing;
                     }
                 }
+                if (current == Enemystate.dead) //boss is dead
+                {
+                    Image = ImageBank.bossDeath[0]; //explosion
+                    xSpeed = 0;
+                    ySpeed = 0;
+
+                    deathTimer++; //hold for a certain number of frames
+                    if (deathTimer >= deathTime)
+                    {
+                     //   map.Movables.Add(new GoldHat(player, Location.X, Location.Y));
+                        ySpeed = -5;
+                        current = Enemystate.crown; //then become the crown
+                        col = Color.White;
+                        Image = ImageBank.goldHat;
+                        Location = new Rectangle(Location.X, Location.Y, 87, 78);
+                        health = BOSS_HEALTH;
+                    }
+                }
             }
             else {
                 if (CheckInRange()) {
@@ -236,33 +280,27 @@ namespace Hax {
             }
         }
 
-        private Boolean IsPlayerLeft() {
-            return player.Location.X < Location.X;
+        private Boolean IsPlayerLeft() { //returns true if player is to the left
+            return player.Location.Center.X < Location.Center.X;
         }
 
         public override void Draw(SpriteBatch sb) {
             if (current != Enemystate.notSpawned) {
-                if (current != Enemystate.dead) { //draw normally unless dead
                     base.Draw(sb);
-                }
-                else { //draw upsidedown if dead
-                    SpriteEffects se = SpriteEffects.FlipVertically;
-
-                    sb.Draw(Image, RealLocation, null, Color.White, 0.0f, new Vector2(0, 0), se, 0.0f);
-                }
             }
         }
 
         //player gets within range on X and Y coordinates, set state to walk
         public bool CheckInRange() {
-            return Location.X - player.Location.X <= range && player.Location.X - (Location.X+Location.Width) <=range;
+            return Math.Abs(player.Location.Center.X - Location.Center.X) <= Math.Abs(range);
+            //return Location.X - player.Location.X <= range && player.Location.X - (Location.X+Location.Width) <=range;
             /*
             if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(range)) {
                 current = Enemystate.standing;
             }*/
         }
 
-        public override void CollideWithPlayer() {
+        public override void CollideWithPlayer() {//kill player unless hes defending, inwhich case boss takes damage
             //if (current != Enemystate.vulnerable && current != Enemystate.dead ) { 
                 if (player.State == Player.Playerstate.defending) {
                     current = Enemystate.vulnerable;
@@ -272,11 +310,12 @@ namespace Hax {
            // }
         }
 
-        public override void Reset() {
+        public override void Reset() {//respawn boss
             
             base.Reset();
-            health = 40;
+            health = BOSS_HEALTH;
             col = Color.White;
+            Location = new Rectangle(spawnX, spawnY, 185, 151);
             //current = Enemystate.notSpawned;
         }
 

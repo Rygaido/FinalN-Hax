@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Audio;
 #endregion
 
 namespace Hax {
@@ -29,6 +30,9 @@ namespace Hax {
         //buttons for win and lose screens
         GameObject resetButton;
         GameObject continueButton;
+
+        SoundEffect music;
+        SoundEffectInstance musicInstance;
 
         bool win = false;
         
@@ -91,14 +95,14 @@ namespace Hax {
             
             //load list of levels
            // levels.Add("testLevel");
-            /*
+        //    /*
             levels.Add("levelOne");
             levels.Add("levelTwo");
             levels.Add("levelThree");
             levels.Add("levelFour");
             levels.Add("levelFive");
-            levels.Add("levelSix");//*/
-          //  levels.Add("levelSeven");//*/
+            levels.Add("levelSix");
+            levels.Add("levelSeven");//*/
             levels.Add("bossLevel");
 
             //create new map
@@ -139,24 +143,28 @@ namespace Hax {
             ImageBank.playerJump.Add(Content.Load<Texture2D>("jump"));
             ImageBank.playerAttack.Add(Content.Load<Texture2D>("shootingaction"));
             ImageBank.playerDefend.Add(Content.Load<Texture2D>("shieldaction"));
-            ImageBank.winscreen = Content.Load<Texture2D>("win");
+            ImageBank.winscreen = Content.Load<Texture2D>("Winscreen");
             ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1"));
             ImageBank.walkingMinion.Add(Content.Load<Texture2D>("enemy1_flip")); 
             ImageBank.shootingMinion.Add(Content.Load<Texture2D>("enemy2idle"));
             ImageBank.lampMinion.Add(Content.Load<Texture2D>("lamp"));
             ImageBank.lampMinionBroken.Add(Content.Load<Texture2D>("lampbroke"));
             ImageBank.goal = Content.Load<Texture2D>("goal");
-            ImageBank.pausemessage = Content.Load<Texture2D>("wordart");
-            ImageBank.looseScreen = Content.Load<Texture2D>("gameoverscreen");
+            ImageBank.pausemessage = Content.Load<Texture2D>("pausescreen");
+            ImageBank.looseScreen = Content.Load<Texture2D>("losescreen");
             ImageBank.bullet = Content.Load<Texture2D>("New Canvas");
             ImageBank.background = Content.Load<Texture2D>("800back");
+            ImageBank.win_background = Content.Load<Texture2D>("youwin");
             ImageBank.playerBullet = Content.Load<Texture2D>("bullet");
+            ImageBank.keys = Content.Load<Texture2D>("keys");
+            ImageBank.goldHat = Content.Load<Texture2D>("GOLD");
 
             ImageBank.bossIdle.Add(Content.Load<Texture2D>("bosstank"));
             ImageBank.bossChasing.Add(Content.Load<Texture2D>("chargetank"));
             ImageBank.bossShooting.Add(Content.Load<Texture2D>("robotturtle"));
             ImageBank.bossVulnerable.Add(Content.Load<Texture2D>("vunerable"));
             ImageBank.bossLaser.Add(Content.Load<Texture2D>("laser"));
+            ImageBank.bossDeath.Add(Content.Load<Texture2D>("EXPLOSION"));
 
             ImageBank.platforms.Add(Content.Load<Texture2D>("platform"));
             ImageBank.platforms.Add(Content.Load<Texture2D>("shelfblock"));
@@ -165,6 +173,9 @@ namespace Hax {
 
             ImageBank.font = Content.Load<SpriteFont>("font1");
             ImageBank.square = Content.Load<Texture2D>("WhiteSquare");
+
+            music = Content.Load<SoundEffect>("HaxDraft3");
+            musicInstance = music.CreateInstance();
         }
 
         /// <summary>
@@ -183,6 +194,17 @@ namespace Hax {
         protected override void Update(GameTime gameTime) {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            if (musicInstance.State == SoundState.Stopped) //start music
+            {
+                musicInstance.Volume = 1.0f; //full volume, loop
+                musicInstance.IsLooped = true;
+                musicInstance.Play();
+            }
+            else //keep playing music
+            {
+                musicInstance.Resume();
+            }
 
             //get current state of keyboard
             KeyboardState current = Keyboard.GetState();
@@ -278,8 +300,12 @@ namespace Hax {
 
                 map.Update();
 
-                if (map.CheckWin && current.IsKeyDown(Keys.Down)) {
+                if (map.CheckWin && current.IsKeyDown(Keys.Down)) { //player pressed down key on a staircase
                     win = true;
+                }
+                if (map.GameOver) //player has touched the golden hat
+                {
+                    NextLevel();
                 }
             }
             else {
@@ -367,17 +393,22 @@ namespace Hax {
             win = false;
         }
 
-        public void NextLevel() {
+        public void NextLevel() { //transition to next level
             win = false;
             paused = false;
             currentLevel++;
 
-            if (currentLevel >= levels.Count) {
-                Exit();
+            if (currentLevel >= levels.Count) //if no more levels
+            {
+                map = new Map(player); //make blank map, change background to win screen and remove player from game area
+                background.Image = ImageBank.win_background;
+                player.Location = new Rectangle(999, 999, 1, 1);
             }
-
-            map = new Map(player);
-            map.Load(levels[currentLevel]);
+            else//otherwise, load next level
+            {
+                map = new Map(player);
+                map.Load(levels[currentLevel]);
+            }
         }
     }
 }

@@ -30,8 +30,23 @@ namespace Hax {
         }
 
         private int jumpSpeed =20; //vertical speed at instant of jump
+        public int JumpSpeed
+        {
+            get { return jumpSpeed; }
+            set { jumpSpeed = value; }
+        }
         private int runSpeed = 5; //max running speed
+        public int RunSpeed
+        {
+            get { return runSpeed; }
+            set { runSpeed = value; }
+        }
         private int acceleration = 1;
+        public int Acceleration
+        {
+            get { return acceleration; }
+            set { acceleration = value; }
+        }
 
         //boolean variables for whether certain skills are usable at the time
         private Boolean canAttack=true;
@@ -69,7 +84,7 @@ namespace Hax {
             state = Playerstate.standing;
             previous = state;
 
-            bullet = new Projectile(2, 2, false);
+        //    bullet = new Projectile(2, 2, false);
         }
 
         //Method stubs for things player can do
@@ -127,7 +142,7 @@ namespace Hax {
            // this.col = Color.Red;
             if (!shotFired) {
                 //make new bullet at player's location
-                bullet = new Projectile(Location.X, Location.Y, false);
+                bullet = new Projectile(Location.Center.X, Location.Center.Y, false);
                 shotFired = true;
 
                 //set speed negative if player is facing the left
@@ -166,10 +181,10 @@ namespace Hax {
 
         }
         public void SKey() { //s key shoots
-            Attack();
+           // Attack();
         }
         public void DKey() { //d key defends
-            Defend();
+          //  Defend();
         }
         public void FKey() { //F key does it all
             if (cheat == Cheatstate.attack) {

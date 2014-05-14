@@ -39,6 +39,9 @@ namespace Hax {
         public static List<Texture2D> bossShooting = new List<Texture2D>();
         public static List<Texture2D> bossVulnerable = new List<Texture2D>();
         public static List<Texture2D> bossLaser = new List<Texture2D>();
+        public static List<Texture2D> bossDeath = new List<Texture2D>();
+
+        public static Texture2D goldHat;
 
         //sprites for player and enemy bullets
         public static Texture2D bullet;
@@ -52,6 +55,9 @@ namespace Hax {
         public static Texture2D wallImage;
         public static List<Texture2D> platforms = new List<Texture2D>();
         public static Texture2D background;
+        public static Texture2D win_background;
+        public static Texture2D keys;
+
 
         public static SpriteFont font; //a spritefont//used to draw text
 

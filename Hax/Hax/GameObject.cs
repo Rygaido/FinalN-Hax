@@ -64,7 +64,7 @@ namespace Hax {
             if (Image != null) {
                 SpriteEffects se = SpriteEffects.None; //apply effect to flip image if faceLeft is true
                 if (faceLeft) { se = SpriteEffects.FlipHorizontally; }
-
+                //SpriteEffects.
                 sb.Draw(Image, RealLocation, null, col, 0.0f, new Vector2(0, 0), se, 0.0f);
             }
         }

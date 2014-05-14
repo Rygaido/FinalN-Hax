@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.GamerServices;
 
 namespace Hax {
     class ShootingMinion:Enemy {
-        private int range = 200;
+        private int range = 300;
         private int bulletSpeed = 4;
 
 
@@ -62,7 +62,7 @@ namespace Hax {
 
         //player gets within range on X and Y coordinates, set state to shooting//otherwise revert to standing
         public void CheckInRange() {
-            if (Math.Abs(player.Location.X - Location.X) <= Math.Abs(range) && Math.Abs(player.Location.Y - Location.Y)/2 <= Math.Abs(range)) {
+            if (Math.Abs(player.Location.Center.X - Location.Center.X) <= Math.Abs(range) && Math.Abs(player.Location.Center.Y - Location.Center.Y)/2 <= Math.Abs(range)) {
                 current = Enemystate.shooting;
             }
             else {

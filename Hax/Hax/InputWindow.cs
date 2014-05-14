@@ -16,6 +16,7 @@ namespace Hax {
         private string input="";
 
         private Player player;
+        private bool konami = false;
 
         public InputWindow(Player p) {
             player = p;
@@ -85,22 +86,40 @@ namespace Hax {
             else if (input == "SIXTWOTHREE") {
                 player.DeActivateCheats();
                 player.Col = Color.White;
-                //player.Col = Color.Yellow;
+                player.Location = new Rectangle(player.Location.X, player.Location.Bottom-87, 57, 87);
+                player.JumpSpeed = 20;
+                player.RunSpeed = 5;
             }
                 //color coded cheatcodes, originally for debugging, now for lulz
-            else if (input == "ANEWSTART") {
+            else if (input == "ANEWSTART") { //blue mode cheat
                 player.Col = Color.Blue;
             }
-            else if (input == "THECHIN")
+            else if (input == "THECHIN") //red mode cheat
             {
                 player.Col = Color.Crimson;
             }
-            else if (input == "CAPTAINCANADA")
+            else if (input == "CAPTAINCANADA") //invisible mode cheat
             {
                 player.Col = Color.Transparent;
             } 
-            else if (input == "THISPARTYSOVER") {
+            else if (input == "THISPARTYSOVER") { //purple mode cheat
                 player.Col = new Color(200,0,255);
+            }
+            else if (input == "DRINKME") //small mode cheat
+            {
+                player.Location = new Rectangle(player.Location.X, player.Location.Y, player.Location.Width / 2, player.Location.Height / 2);
+            }
+            else if (input == "ROADRUNNER") //fastmode cheat
+            {
+                player.RunSpeed *= 4;
+            }
+            else if (input == "MOONSHOES") //high jump cheat
+            {
+                player.JumpSpeed *= 2;
+            }
+            else if (input == "UPUPDOWNDOWNLEFTRIGHTLEFTRIGHTBA") //high jump cheat
+            {
+                konami = !konami;
             }
             else//unrecognized cheat code
             {
