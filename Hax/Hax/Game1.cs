@@ -95,7 +95,7 @@ namespace Hax {
             
             //load list of levels
            // levels.Add("testLevel");
-        //    /*
+          // /*
             levels.Add("levelOne");
             levels.Add("levelTwo");
             levels.Add("levelThree");
@@ -154,7 +154,8 @@ namespace Hax {
             ImageBank.looseScreen = Content.Load<Texture2D>("losescreen");
             ImageBank.bullet = Content.Load<Texture2D>("New Canvas");
             ImageBank.background = Content.Load<Texture2D>("800back");
-            ImageBank.win_background = Content.Load<Texture2D>("youwin");
+            ImageBank.win_background = Content.Load<Texture2D>("youwin2");
+            ImageBank.konami_background=Content.Load<Texture2D>("konamibackground");
             ImageBank.playerBullet = Content.Load<Texture2D>("bullet");
             ImageBank.keys = Content.Load<Texture2D>("keys");
             ImageBank.goldHat = Content.Load<Texture2D>("GOLD");
@@ -174,7 +175,7 @@ namespace Hax {
             ImageBank.font = Content.Load<SpriteFont>("font1");
             ImageBank.square = Content.Load<Texture2D>("WhiteSquare");
 
-            music = Content.Load<SoundEffect>("HaxDraft3");
+            music = Content.Load<SoundEffect>("HaxMusicFinal");
             musicInstance = music.CreateInstance();
         }
 
@@ -315,6 +316,15 @@ namespace Hax {
             //store previous state of keyboard
             previous = current;
             mousePrevious = mouseCurrent;
+
+            if (background.Image == ImageBank.background && textBox.Konami)
+            {
+                background.Image = ImageBank.konami_background;
+            }
+            if (background.Image == ImageBank.konami_background && !textBox.Konami)
+            {
+                background.Image = ImageBank.background;
+            }
 
             base.Update(gameTime);
         }

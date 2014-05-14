@@ -17,6 +17,10 @@ namespace Hax {
 
         private Player player;
         private bool konami = false;
+        public bool Konami
+        {
+            get { return konami; }
+        }
 
         public InputWindow(Player p) {
             player = p;
@@ -89,6 +93,7 @@ namespace Hax {
                 player.Location = new Rectangle(player.Location.X, player.Location.Bottom-87, 57, 87);
                 player.JumpSpeed = 20;
                 player.RunSpeed = 5;
+                konami = false;
             }
                 //color coded cheatcodes, originally for debugging, now for lulz
             else if (input == "ANEWSTART") { //blue mode cheat
@@ -101,9 +106,14 @@ namespace Hax {
             else if (input == "CAPTAINCANADA") //invisible mode cheat
             {
                 player.Col = Color.Transparent;
-            } 
-            else if (input == "THISPARTYSOVER") { //purple mode cheat
-                player.Col = new Color(200,0,255);
+            }
+            else if (input == "LIGHTISHRED") //pinkmode cheat
+            {
+                player.Col = Color.HotPink;
+            }
+            else if (input == "THISPARTYSOVER")
+            { //purple mode cheat
+                player.Col = new Color(200, 0, 255);
             }
             else if (input == "DRINKME") //small mode cheat
             {

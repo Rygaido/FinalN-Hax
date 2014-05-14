@@ -56,6 +56,7 @@ namespace Hax {
         public static List<Texture2D> platforms = new List<Texture2D>();
         public static Texture2D background;
         public static Texture2D win_background;
+        public static Texture2D konami_background;
         public static Texture2D keys;
 
 
